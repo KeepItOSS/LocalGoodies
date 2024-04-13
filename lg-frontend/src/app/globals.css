@@ -3,31 +3,31 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --background-color: #ffffff; /* White background */
+  --font-color: #000000; /* Black fonts */
+  --accent-green: #00ff00; /* Green accent color */
+  --accent-orange: #ffa500; /* Orange accent color */
 }
 
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: light) {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --background-color: #333333; /* Dark background */
+    --font-color: #ffffff; /* White fonts */
   }
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  color: var(--font-color);
+  background-color: var(--background-color);
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+/* Green accent */
+.green-accent {
+  color: var(--accent-green);
 }
+
+/* Orange accent */
+.orange-accent {
+  color: var(--accent-orange);
+}
+
