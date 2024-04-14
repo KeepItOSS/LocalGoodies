@@ -1,6 +1,3 @@
-import { Footer } from "./components/shared/footer";
-import { Navbar } from "./components/shared/nav";
-
 export default async function Home() {
     return (
         <>
