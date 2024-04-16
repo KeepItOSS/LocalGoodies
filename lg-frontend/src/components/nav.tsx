@@ -2,10 +2,6 @@
 import Link from "next/link";
 import { useState } from "react"
 
-/*
- * This component is temporary and should be replaced with one using Material UI for component integrity
- */
-
 export function Navbar() {
     return(
         <nav className="bg-emerald-800 p-4">
@@ -54,7 +50,7 @@ function MobileNavigation() {
             </button>
             {isMenuOpen && (
                 <ul className="absolute right-0 bg-emerald-800 mt-2 p-6 rounded text-xl">
-                    <li className="mb-2"><Link href="/search" className="block text-white hover:text-gray-300">Search</Link></li>
+                    <li className="mb-2"><Link href="/search/all" className="block text-white hover:text-gray-300">Search</Link></li>
                     <li className="mb-2"><a href="#" className="block text-white hover:text-gray-300">Dashboard</a></li>
                     <li className="mb-2"><a href="#" className="block text-white hover:text-gray-300">Profile</a></li>
                     <li className="mb-2"><a href="#" className="block text-white hover:text-gray-300">About</a></li>
@@ -68,7 +64,7 @@ function DesktopNavigation() {
     return(
         <>
             <ul className="hidden md:flex md:space-x-4">
-                <li><Link href="/search" className="block text-white hover:text-gray-300">Search</Link></li>
+                <li><Link href="/search/all" className="block text-white hover:text-gray-300">Search</Link></li>
                 <li><a href="#" className="text-white hover:text-gray-300">Dashboard</a></li>
                 <li><a href="#" className="text-white hover:text-gray-300">Profile</a></li>
                 <li><a href="#" className="text-white hover:text-gray-300">About</a></li>
