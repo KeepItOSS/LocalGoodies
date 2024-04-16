@@ -22,8 +22,6 @@ public class BusinessListingController {
 
     @GetMapping
     public List<Business> getAllBooks() {
-        List<Business> businesses = businessListingService.getAllBusinesses();
-        System.out.println(businesses.getFirst());
-        return businesses;
+        return businessListingService.getAllBusinesses();
     }
 }

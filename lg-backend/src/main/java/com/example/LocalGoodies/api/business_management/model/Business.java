@@ -7,29 +7,6 @@ import java.time.OffsetDateTime;
 @Entity(name = "BUSINESS")
 public class Business {
 
-    Business() { }
-
-    Business(String name, String phoneNumber,
-             String email) {
-        this.name = name;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-        this.created_at = OffsetDateTime.now();
-        this.changed_at = OffsetDateTime.now();
-        this.active = false;
-    }
-
-    Business(Long id, String name, String phoneNumber,
-             String email, OffsetDateTime created_at,
-             OffsetDateTime changed_at, Boolean active) {
-        this.name = name;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-        this.created_at = OffsetDateTime.now();
-        this.changed_at = OffsetDateTime.now();
-        this.active = false;
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -49,8 +26,27 @@ public class Business {
     @Column(name = "CHANGED_AT")
     private OffsetDateTime changed_at;
 
+    @Column(name = "DESCRIPTION")
+    private String description;
+
     @Column(name = "ACTIVE")
     private Boolean active;
+
+    Business() { }
+
+    Business(Long id, String name, String phoneNumber,
+             String email, OffsetDateTime created_at,
+             OffsetDateTime changed_at, String description,
+             Boolean active) {
+        this.id = id;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.created_at = created_at;
+        this.changed_at = changed_at;
+        this.description = description;
+        this.active = active;
+    }
 
     public Long getId() {
         return id;
@@ -78,5 +74,9 @@ public class Business {
 
     public Boolean getActive() {
         return active;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }
