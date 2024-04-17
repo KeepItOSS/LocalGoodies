@@ -32,12 +32,16 @@ public class Business {
     @Column(name = "ACTIVE")
     private Boolean active;
 
+    @Column(name = "TYPE")
+    @Enumerated(EnumType.STRING)
+    private BusinessTypeEnum type;
+
     Business() { }
 
     Business(Long id, String name, String phoneNumber,
              String email, OffsetDateTime created_at,
              OffsetDateTime changed_at, String description,
-             Boolean active) {
+             Boolean active, BusinessTypeEnum type) {
         this.id = id;
         this.name = name;
         this.phoneNumber = phoneNumber;
@@ -46,6 +50,7 @@ public class Business {
         this.changed_at = changed_at;
         this.description = description;
         this.active = active;
+        this.type = type;
     }
 
     public Long getId() {
@@ -78,5 +83,9 @@ public class Business {
 
     public String getDescription() {
         return description;
+    }
+
+    public BusinessTypeEnum getType() {
+        return type;
     }
 }

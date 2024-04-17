@@ -6,5 +6,6 @@ export type Business = {
     description: string,
     createdAt: Date,
     chanchedAt: Date,
-    active: boolean
+    active: boolean,
+    type: string
 }
