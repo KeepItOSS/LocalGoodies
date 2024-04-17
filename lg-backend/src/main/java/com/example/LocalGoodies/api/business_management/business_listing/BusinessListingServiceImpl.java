@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class BusinessListingServiceImpl implements BusinessListingService{
+public class BusinessListingServiceImpl implements BusinessListingService {
 
     private final BusinessListingRepository businessListingRepository;
 
