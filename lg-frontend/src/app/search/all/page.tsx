@@ -9,9 +9,9 @@ export default async function Page() {
         <div className="pt-12 p-5 flex flex-col gap-5">
             { business.map( (bus:any) => 
                 <CardL key={bus.id}
-                    name= {bus.name}
-                    desc= {bus.description} 
-                    type= {bus.type}
+                    name = {bus.name}
+                    desc = {bus.description} 
+                    type = {bus.type}
                 />
             )}
         </div>

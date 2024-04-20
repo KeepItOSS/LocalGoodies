@@ -6,7 +6,6 @@ import java.time.OffsetDateTime;
 
 @Entity(name = "BUSINESS")
 public class Business {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -32,22 +31,60 @@ public class Business {
     @Column(name = "ACTIVE")
     private Boolean active;
 
-    @Column(name = "TYPE")
-    @Enumerated(EnumType.STRING)
+    @Column(name = "TYPE") @Enumerated(EnumType.STRING)
     private BusinessTypeEnum type;
 
-    Business() { }
+    public static class Builder {
+        private final String name;
+        private final String description;
+        private final BusinessTypeEnum type;
 
-    Business(Long id, String name, String phoneNumber,
-             String email, OffsetDateTime created_at,
-             OffsetDateTime changed_at, String description,
+        private String phoneNumber = "";
+        private String email = "";
+
+        public Builder(String name, String description, BusinessTypeEnum type) {
+            this.name = name;
+            this.description = description;
+            this.type = type;
+        }
+
+        public Business build() {
+            return new Business(this, null);
+        }
+
+        public Builder phoneNumber(String val) {
+            phoneNumber = val; return this;
+        }
+
+        public Builder email(String val) {
+            email = val; return this;
+        }
+    }
+
+    protected Business() { }
+
+    private Business(Builder builder, Long id) {
+        this.id = id;
+        this.name = builder.name;
+        this.description = builder.description;
+        this.type = builder.type;
+        this.phoneNumber = builder.phoneNumber;
+        this.email = builder.email;
+        this.created_at = OffsetDateTime.now();
+        this.changed_at = OffsetDateTime.now();
+        this.active = false;
+    }
+
+    private Business(Long id, String name, String phoneNumber,
+             String email, OffsetDateTime createdAt,
+             OffsetDateTime changedAt, String description,
              Boolean active, BusinessTypeEnum type) {
         this.id = id;
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.email = email;
-        this.created_at = created_at;
-        this.changed_at = changed_at;
+        created_at = createdAt;
+        changed_at = changedAt;
         this.description = description;
         this.active = active;
         this.type = type;

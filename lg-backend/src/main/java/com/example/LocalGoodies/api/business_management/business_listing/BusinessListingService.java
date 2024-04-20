@@ -5,4 +5,5 @@ import java.util.List;
 
 public interface BusinessListingService {
     List<Business> getAllBusinesses();
+    List<Business> getByType(String type);
 }
