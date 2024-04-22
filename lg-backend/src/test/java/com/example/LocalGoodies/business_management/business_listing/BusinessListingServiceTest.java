@@ -52,7 +52,7 @@ public class BusinessListingServiceTest {
     @Test
     void shouldFetchHandmadeOnly() {
         //given
-        String type = "HANDMADE";
+        BusinessTypeEnum type = BusinessTypeEnum.HANDMADE;
         Business B1 = new Business
                 .Builder("Business1", "Test for B1", BusinessTypeEnum.HANDMADE)
                 .email("handmade@email.com")
