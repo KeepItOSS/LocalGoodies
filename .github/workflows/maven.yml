@@ -27,12 +27,14 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
         cache: maven
-    - name: Checkout to backend folder
-      run: cd lg-backend
+        
     - name: Build with Maven
       run: mvn -B package -DskipTests --file lg-backend/pom.xml
+      working-directory: lg-backend
+    
     - name: Run tests
       run: mvn test
+      working-directory: lg-backend
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     - name: Update dependency graph
