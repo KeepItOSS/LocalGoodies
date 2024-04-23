@@ -1,6 +1,7 @@
 package com.example.LocalGoodies.api.business_management.business_listing;
 
 import com.example.LocalGoodies.api.business_management.model.Business;
+import com.example.LocalGoodies.api.business_management.model.BusinessTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +27,7 @@ public class BusinessListingServiceImpl implements BusinessListingService {
     }
 
     @Override
-    public List<Business> getByType(String type) {
+    public List<Business> getByType(BusinessTypeEnum type) {
         return businessListingRepository.findAll(isOfType(type).and(isActive()));
     }
 }
