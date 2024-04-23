@@ -28,7 +28,7 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Checkout to backend folder
-      run: cd backend
+      run: cd lg-backend
     - name: Build with Maven
       run: mvn -B package --file pom.xml
     - name: Run tests
