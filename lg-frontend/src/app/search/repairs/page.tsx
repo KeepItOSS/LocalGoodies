@@ -3,7 +3,7 @@ import { Business } from ".././types";
 import { getBusinesses } from "../http";
 
 export default async function Page() {
-    let business: Business[] = await getBusinesses("HANDMADE");
+    let business: Business[] = await getBusinesses("REPAIR");
     
     return (
         <div className="pt-12 p-5 flex flex-col gap-5">

@@ -4,9 +4,9 @@ export default function BusinessTypeListing() {
     return (
         <span className="flex gap-5 pt-4">
             <CustomButton name='All' link="/search/all"/>
+            <CustomButton name='Restaurants' link="/search/restaurants"/>
             <CustomButton name='Handmade Clothing' link="/search/handmade"/>
-            <CustomButton name='Artisan Beverages' link="/#"/>
-            <CustomButton name='Repairs' link="/#"/>
+            <CustomButton name='Repairs' link="/search/repairs"/>
         </span>
     );
 }
