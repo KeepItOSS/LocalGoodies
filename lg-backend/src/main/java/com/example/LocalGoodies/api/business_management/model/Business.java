@@ -1,16 +1,18 @@
 package com.example.LocalGoodies.api.business_management.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 import java.time.OffsetDateTime;
 
 @Entity(name = "BUSINESS")
 public class Business {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "NAME")
+    @NotBlank(message = "Name is mandatory")
     private String name;
 
     @Column(name = "PHONE_NUMBER")
@@ -26,6 +28,7 @@ public class Business {
     private OffsetDateTime changed_at;
 
     @Column(name = "DESCRIPTION")
+    @NotBlank(message = "Description is mandatory")
     private String description;
 
     @Column(name = "ACTIVE")
