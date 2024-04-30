@@ -1,8 +1,12 @@
 package com.example.LocalGoodies.api.business_management.model.DTO;
 import com.example.LocalGoodies.api.business_management.model.BusinessTypeEnum;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 
 public class BusinessRequestDTO {
+    @NotEmpty @NotBlank
     private String name;
+    @NotEmpty @NotBlank
     private String description;
     private BusinessTypeEnum type;
 
