@@ -17,7 +17,6 @@ import java.util.List;
 import static com.example.LocalGoodies.api.business_management.business_listing.BusinessSpecs.isActive;
 import static com.example.LocalGoodies.api.business_management.business_listing.BusinessSpecs.isOfType;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
