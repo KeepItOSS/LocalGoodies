@@ -3,6 +3,7 @@ package com.example.LocalGoodies.api.business_management.business_listing;
 import com.example.LocalGoodies.api.business_management.model.Business;
 import com.example.LocalGoodies.api.business_management.model.BusinessTypeEnum;
 import com.example.LocalGoodies.api.business_management.model.DTO.BusinessRequestDTO;
+import com.example.LocalGoodies.api.business_management.model.DTO.BusinessResponseDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,9 +41,10 @@ public class BusinessListingController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Business> addNewBusiness(@Valid @RequestBody BusinessRequestDTO businessRequestDTO) {
+    public ResponseEntity<BusinessResponseDTO> addNewBusiness(@Valid @RequestBody BusinessRequestDTO businessRequestDTO) {
         Business business = businessListingService.addNew(businessRequestDTO);
-        return new ResponseEntity<>(business, HttpStatus.CREATED);
+        BusinessResponseDTO dto = mapEntityToResponseDto(business);
+        return new ResponseEntity<>(dto, HttpStatus.CREATED);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -56,5 +58,15 @@ public class BusinessListingController {
             errors.put(fieldName, errorMessage);
         });
         return errors;
+    }
+
+    private BusinessResponseDTO mapEntityToResponseDto(Business entity) {
+        return new BusinessResponseDTO(
+                entity.getName(),
+                entity.getDescription(),
+                entity.getType(),
+                entity.getEmail(),
+                entity.getPhoneNumber()
+        );
     }
 }
