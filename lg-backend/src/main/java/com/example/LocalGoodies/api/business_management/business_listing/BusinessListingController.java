@@ -6,6 +6,7 @@ import com.example.LocalGoodies.api.business_management.model.BusinessTypeEnum;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class BusinessListingController {
         this.businessListingService = businessListingService;
     }
 
-    @GetMapping("search/all")
+    @GetMapping("/search/all")
     public List<Business> getAll() {
         List<Business> businesses = businessListingService.getAllBusinesses();
         return businesses;
@@ -39,9 +40,9 @@ public class BusinessListingController {
     }
 
     @PostMapping("/add")
-    public Business addNewBusiness(@Valid @RequestBody BusinessRequestDTO businessRequestDTO) {
+    public ResponseEntity<Business> addNewBusiness(@Valid @RequestBody BusinessRequestDTO businessRequestDTO) {
         Business business = businessListingService.addNew(businessRequestDTO);
-        return business;
+        return new ResponseEntity<>(business, HttpStatus.CREATED);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
