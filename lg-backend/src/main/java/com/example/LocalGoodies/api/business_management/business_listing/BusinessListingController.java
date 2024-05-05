@@ -30,18 +30,20 @@ public class BusinessListingController {
 
     @GetMapping("/search/all")
     public List<Business> getAll() {
-        List<Business> businesses = businessListingService.getAllBusinesses();
+        List<Business> businesses = businessListingService.getAllActiveBusinesses();
         return businesses;
     }
 
     @GetMapping("/search")
-    public List<Business> getByType(@RequestParam(name = "type") BusinessTypeEnum type) {
+    public List<Business> getByType(
+            @RequestParam(name = "type") BusinessTypeEnum type) {
         List<Business> businesses = businessListingService.getByType(type);
         return businesses;
     }
 
     @PostMapping("/add")
-    public ResponseEntity<BusinessResponseDTO> addNewBusiness(@Valid @RequestBody BusinessRequestDTO businessRequestDTO) {
+    public ResponseEntity<BusinessResponseDTO> addNewBusiness(
+            @Valid @RequestBody BusinessRequestDTO businessRequestDTO) {
         Business business = businessListingService.addNew(businessRequestDTO);
         BusinessResponseDTO dto = mapEntityToResponseDto(business);
         return new ResponseEntity<>(dto, HttpStatus.CREATED);
@@ -49,7 +51,7 @@ public class BusinessListingController {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationExceptions(
+    private Map<String, String> handleValidationExceptions(
             MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {

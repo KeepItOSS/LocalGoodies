@@ -1,55 +1,14 @@
 package com.example.LocalGoodies.api.business_management.model.DTO;
+
 import com.example.LocalGoodies.api.business_management.model.BusinessTypeEnum;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 
-public class BusinessRequestDTO {
-    @NotEmpty @NotBlank
-    private String name;
-    @NotEmpty @NotBlank
-    private String description;
-    private BusinessTypeEnum type;
-
-    private String phoneNumber = "";
-    private String email = "";
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public BusinessTypeEnum getType() {
-        return type;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setType(BusinessTypeEnum type) {
-        this.type = type;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
+public record BusinessRequestDTO(
+        @NotEmpty @NotBlank String name,
+        @NotEmpty @NotBlank String description,
+        BusinessTypeEnum type,
+        String phoneNumber,
+        String email
+) {
 }

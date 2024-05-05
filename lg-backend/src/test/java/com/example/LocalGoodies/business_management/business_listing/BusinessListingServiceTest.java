@@ -44,7 +44,7 @@ public class BusinessListingServiceTest {
         List<Business> businesses = List.of(B1, B2);
         when(businessListingRepository.findAll(isActive())).thenReturn(businesses);
         // when
-        List<Business> result = businessListingService.getAllBusinesses();
+        List<Business> result = businessListingService.getAllActiveBusinesses();
         // then
         Assertions.assertNotNull(result);
         Assertions.assertEquals(2, result.size());
@@ -72,10 +72,12 @@ public class BusinessListingServiceTest {
     @Test
     void shouldCreateWhenEmptyEmailAndPhoneNumber() {
         // given
-        BusinessRequestDTO businessRequestDTO = new BusinessRequestDTO();
-        businessRequestDTO.setName("TEST");
-        businessRequestDTO.setDescription("DESCRIPTION");
-        businessRequestDTO.setType(BusinessTypeEnum.HANDMADE);
+        BusinessRequestDTO businessRequestDTO = new BusinessRequestDTO(
+                "TEST",
+                "DESCRIPTION",
+                BusinessTypeEnum.HANDMADE,
+                null,
+                null);
         Business expectedBusiness = new Business.Builder("TEST", "DESCRIPTION", BusinessTypeEnum.HANDMADE).build();
 
         when(businessListingRepository.save(any(Business.class))).thenReturn(expectedBusiness);
@@ -92,11 +94,12 @@ public class BusinessListingServiceTest {
     @Test
     void shouldCreateWhenEmailProvided() {
         // given
-        BusinessRequestDTO businessRequestDTO = new BusinessRequestDTO();
-        businessRequestDTO.setName("TEST");
-        businessRequestDTO.setDescription("DESCRIPTION");
-        businessRequestDTO.setType(BusinessTypeEnum.HANDMADE);
-        businessRequestDTO.setEmail("test@test.com");
+        BusinessRequestDTO businessRequestDTO = new BusinessRequestDTO(
+                "TEST",
+                "DESCRIPTION",
+                BusinessTypeEnum.HANDMADE,
+                null,
+                "test@test.com");
         Business expectedBusiness = new Business.Builder("TEST", "DESCRIPTION", BusinessTypeEnum.HANDMADE).email("test@test.com").build();
 
         when(businessListingRepository.save(any(Business.class))).thenReturn(expectedBusiness);
@@ -113,11 +116,12 @@ public class BusinessListingServiceTest {
     @Test
     void shouldCreateWhenPhoneNumberProvided() {
         // given
-        BusinessRequestDTO businessRequestDTO = new BusinessRequestDTO();
-        businessRequestDTO.setName("TEST");
-        businessRequestDTO.setDescription("DESCRIPTION");
-        businessRequestDTO.setType(BusinessTypeEnum.HANDMADE);
-        businessRequestDTO.setPhoneNumber("+48123123123");
+        BusinessRequestDTO businessRequestDTO = new BusinessRequestDTO(
+                "TEST",
+                "DESCRIPTION",
+                BusinessTypeEnum.HANDMADE,
+                "+48123456789",
+                null);
         Business expectedBusiness = new Business.Builder("TEST", "DESCRIPTION", BusinessTypeEnum.HANDMADE).phoneNumber("+48123123123").build();
 
         when(businessListingRepository.save(any(Business.class))).thenReturn(expectedBusiness);

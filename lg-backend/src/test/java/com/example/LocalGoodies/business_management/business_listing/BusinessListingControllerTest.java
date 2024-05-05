@@ -42,7 +42,7 @@ public class BusinessListingControllerTest {
     public void whenGetRequestToFetchAllBusiness_thenReturnBusinessList() throws Exception {
         Business expectedBusiness = new Business.Builder("TEST", "DESCRIPTION", BusinessTypeEnum.HANDMADE).build();
         List<Business> businessList = List.of(expectedBusiness);
-        when(businessListingService.getAllBusinesses()).thenReturn(businessList);
+        when(businessListingService.getAllActiveBusinesses()).thenReturn(businessList);
 
         mockMvc.perform(get("/api/business-listing/search/all"))
                 .andExpect(status().isOk());
@@ -52,7 +52,7 @@ public class BusinessListingControllerTest {
     public void whenGetRequestToFetchBusinessByType_thenReturnBusinessList() throws Exception {
         Business expectedBusiness = new Business.Builder("TEST", "DESCRIPTION", BusinessTypeEnum.HANDMADE).build();
         List<Business> businessList = List.of(expectedBusiness);
-        when(businessListingService.getAllBusinesses()).thenReturn(businessList);
+        when(businessListingService.getAllActiveBusinesses()).thenReturn(businessList);
 
         mockMvc.perform(get("/api/business-listing/search")
                         .param("type", "HANDMADE"))
@@ -68,23 +68,33 @@ public class BusinessListingControllerTest {
 
     @Test
     public void whenPostRequestToCreateAndValidRequest_thenReturnBusiness() throws Exception {
-        BusinessRequestDTO businessRequestDTO = new BusinessRequestDTO();
-        businessRequestDTO.setName("TEST");
-        businessRequestDTO.setDescription("DESCRIPTION");
-        businessRequestDTO.setType(BusinessTypeEnum.HANDMADE);
-        Business expectedBusiness = new Business.Builder("TEST", "DESCRIPTION", BusinessTypeEnum.HANDMADE).build();
+        BusinessRequestDTO businessRequestDTO = new BusinessRequestDTO(
+                "TEST",
+                "DESCRIPTION",
+                BusinessTypeEnum.HANDMADE,
+                null,
+                null);
+        Business expectedBusiness = new Business.Builder(
+                "TEST",
+                "DESCRIPTION",
+                BusinessTypeEnum.HANDMADE).build();
+
         when(businessListingService.addNew(any())).thenReturn(expectedBusiness);
 
         mockMvc.perform(post("/api/business-listing/add")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(businessRequestDTO)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(businessRequestDTO)))
                 .andExpect(status().isCreated());
     }
 
     @Test
     public void whenPostRequestToCreateAndInvalidRequest_thenThrowException() throws Exception {
-        BusinessRequestDTO businessRequestDTO = new BusinessRequestDTO();
-        businessRequestDTO.setType(BusinessTypeEnum.HANDMADE);
+        BusinessRequestDTO businessRequestDTO = new BusinessRequestDTO(
+                null,
+                null,
+                null,
+                null,
+                null);
         mockMvc.perform(post("/api/business-listing/add")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(businessRequestDTO)))

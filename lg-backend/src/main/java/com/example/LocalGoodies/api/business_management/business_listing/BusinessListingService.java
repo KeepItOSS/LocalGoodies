@@ -7,7 +7,7 @@ import com.example.LocalGoodies.api.business_management.model.DTO.BusinessReques
 import java.util.List;
 
 public interface BusinessListingService {
-    List<Business> getAllBusinesses();
+    List<Business> getAllActiveBusinesses();
     List<Business> getByType(BusinessTypeEnum type);
     Business addNew(BusinessRequestDTO businessRequestDTO);
 }

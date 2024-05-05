@@ -27,7 +27,7 @@ public class BusinessListingServiceImpl implements BusinessListingService {
     }
 
     @Override
-    public List<Business> getAllBusinesses() {
+    public List<Business> getAllActiveBusinesses() {
         return businessListingRepository.findAll(isActive());
     }
 
@@ -39,17 +39,17 @@ public class BusinessListingServiceImpl implements BusinessListingService {
     @Override
     public Business addNew(BusinessRequestDTO businessRequestDTO) {
         Business.Builder businessBuilder = createBusinessBuilderWithRequired(businessRequestDTO);
-        addEmailIfValid(businessRequestDTO.getEmail(), businessBuilder);
-        addPhoneNumberIfValid(businessRequestDTO.getPhoneNumber(), businessBuilder);
+        addEmailIfValid(businessRequestDTO.email(), businessBuilder);
+        addPhoneNumberIfValid(businessRequestDTO.phoneNumber(), businessBuilder);
         Business business = businessBuilder.build();
         return businessListingRepository.save(business);
     }
 
     private Business.Builder createBusinessBuilderWithRequired(BusinessRequestDTO businessRequestDTO) {
         return new Business.Builder(
-                businessRequestDTO.getName(),
-                businessRequestDTO.getDescription(),
-                businessRequestDTO.getType());
+                businessRequestDTO.name(),
+                businessRequestDTO.description(),
+                businessRequestDTO.type());
     }
 
     private void addEmailIfValid(String email, Business.Builder businessBuilder) {
