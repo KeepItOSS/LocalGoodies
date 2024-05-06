@@ -29,8 +29,8 @@ public class BusinessListingController {
         this.businessListingService = businessListingService;
     }
 
-    @GetMapping("/search/all")
-    public List<BusinessResponseDTO> getAll() {
+    @GetMapping("/search/active")
+    public List<BusinessResponseDTO> getAllActive() {
         List<Business> businesses = businessListingService.getAllActiveBusinesses();
         List<BusinessResponseDTO> businessResponseDTOS = mapEntitiesToResponseDtos(businesses);
         return businessResponseDTOS;
