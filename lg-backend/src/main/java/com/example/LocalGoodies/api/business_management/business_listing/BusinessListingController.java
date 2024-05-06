@@ -49,6 +49,16 @@ public class BusinessListingController {
         return new ResponseEntity<>(dto, HttpStatus.CREATED);
     }
 
+    // I want to have an endpoint responsible for updating a business entity
+    @PutMapping("/update/{id}")
+    public ResponseEntity<BusinessResponseDTO> updateBusiness(
+            @PathVariable Long id,
+            @Valid @RequestBody BusinessRequestDTO businessRequestDTO) {
+        Business business = businessListingService.update(id, businessRequestDTO);
+        BusinessResponseDTO dto = mapEntityToResponseDto(business);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     private Map<String, String> handleValidationExceptions(

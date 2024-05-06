@@ -10,4 +10,5 @@ public interface BusinessListingService {
     List<Business> getAllActiveBusinesses();
     List<Business> getByType(BusinessTypeEnum type);
     Business addNew(BusinessRequestDTO businessRequestDTO);
+    Business update(Long id, BusinessRequestDTO businessRequestDTO);
 }
