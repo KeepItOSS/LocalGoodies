@@ -49,7 +49,6 @@ public class BusinessListingController {
         return new ResponseEntity<>(dto, HttpStatus.CREATED);
     }
 
-    // I want to have an endpoint responsible for updating a business entity
     @PutMapping("/update/{id}")
     public ResponseEntity<BusinessResponseDTO> updateBusiness(
             @PathVariable Long id,

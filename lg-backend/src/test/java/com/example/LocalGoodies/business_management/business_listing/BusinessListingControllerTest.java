@@ -20,8 +20,7 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = BusinessListingController.class)
@@ -96,6 +95,41 @@ public class BusinessListingControllerTest {
                 null,
                 null);
         mockMvc.perform(post("/api/business-listing/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(businessRequestDTO)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void whenPutRequestToUpdateAndValidRequest_thenReturnBusiness() throws Exception {
+        BusinessRequestDTO businessRequestDTO = new BusinessRequestDTO(
+                "TEST",
+                "DESCRIPTION",
+                BusinessTypeEnum.HANDMADE,
+                null,
+                null);
+        Business expectedBusiness = new Business.Builder(
+                "TEST",
+                "DESCRIPTION",
+                BusinessTypeEnum.HANDMADE).build();
+
+        when(businessListingService.update(any(), any())).thenReturn(expectedBusiness);
+
+        mockMvc.perform(put("/api/business-listing/update/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(businessRequestDTO)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void whenPutRequestToUpdateAndInvalidRequest_thenThrowException() throws Exception {
+        BusinessRequestDTO businessRequestDTO = new BusinessRequestDTO(
+                null,
+                null,
+                null,
+                null,
+                null);
+        mockMvc.perform(put("/api/business-listing/update/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(businessRequestDTO)))
                 .andExpect(status().isBadRequest());

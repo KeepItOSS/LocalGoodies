@@ -5,6 +5,7 @@ import com.example.LocalGoodies.api.business_management.business_listing.Busines
 import com.example.LocalGoodies.api.business_management.model.Business;
 import com.example.LocalGoodies.api.business_management.model.BusinessTypeEnum;
 import com.example.LocalGoodies.api.business_management.model.DTO.BusinessRequestDTO;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,9 +14,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.example.LocalGoodies.api.business_management.business_listing.BusinessSpecs.isActive;
 import static com.example.LocalGoodies.api.business_management.business_listing.BusinessSpecs.isOfType;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -133,5 +136,80 @@ public class BusinessListingServiceTest {
         Assertions.assertNotNull(result);
         Assertions.assertEquals(expectedBusiness.getName(), result.getName());
         Assertions.assertEquals("+48123123123", result.getPhoneNumber());
+    }
+
+    @Test
+    void shouldUpdateBusinessWhenValidIdAndRequestProvided() {
+        // given
+        Long id = 1L;
+        BusinessRequestDTO businessRequestDTO = new BusinessRequestDTO(
+                "Updated Business",
+                "Updated Description",
+                BusinessTypeEnum.HANDMADE,
+                "updated@email.com",
+                "987654321");
+        Business existingBusiness = new Business.Builder("Existing Business", "Existing Description", BusinessTypeEnum.HANDMADE).build();
+        Business expectedBusiness = new Business.Builder("Updated Business", "Updated Description", BusinessTypeEnum.HANDMADE).email("updated@email.com").phoneNumber("987654321").build();
+
+        when(businessListingRepository.findById(id)).thenReturn(Optional.of(existingBusiness));
+        when(businessListingRepository.save(any(Business.class))).thenReturn(expectedBusiness);
+
+        // when
+        Business result = businessListingService.update(id, businessRequestDTO);
+
+        // then
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(expectedBusiness.getName(), result.getName());
+        Assertions.assertEquals(expectedBusiness.getDescription(), result.getDescription());
+        Assertions.assertEquals(expectedBusiness.getType(), result.getType());
+        Assertions.assertEquals(expectedBusiness.getEmail(), result.getEmail());
+        Assertions.assertEquals(expectedBusiness.getPhoneNumber(), result.getPhoneNumber());
+    }
+
+    @Test
+    void shouldThrowExceptionWhenInvalidIdProvided() {
+        // given
+        Long id = 1L;
+        BusinessRequestDTO businessRequestDTO = new BusinessRequestDTO(
+                "Updated Business",
+                "Updated Description",
+                BusinessTypeEnum.HANDMADE,
+                "updated@email.com",
+                "987654321");
+
+        when(businessListingRepository.findById(id)).thenReturn(Optional.empty());
+
+        // when
+        Exception exception = assertThrows(EntityNotFoundException.class, () -> {
+            businessListingService.update(id, businessRequestDTO);
+        });
+
+        // then
+        String expectedMessage = "Business with id " + id + " not found";
+        String actualMessage = exception.getMessage();
+
+        Assertions.assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    void shouldNotChangeEmailWhenInvalidEmailProvided() {
+        // given
+        BusinessRequestDTO businessRequestDTO = new BusinessRequestDTO(
+                "TEST",
+                "DESCRIPTION",
+                BusinessTypeEnum.HANDMADE,
+                "invalid-email",
+                null);
+        Business expectedBusiness = new Business.Builder("TEST", "DESCRIPTION", BusinessTypeEnum.HANDMADE).email("mail@mail.com").build();
+
+        when(businessListingRepository.save(any(Business.class))).thenReturn(expectedBusiness);
+
+        // when
+        Business result = businessListingService.addNew(businessRequestDTO);
+
+        // then
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(expectedBusiness.getName(), result.getName());
+        Assertions.assertEquals("mail@mail.com", result.getEmail());
     }
 }
