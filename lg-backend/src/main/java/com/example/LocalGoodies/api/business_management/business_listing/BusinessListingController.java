@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/business-listing")
@@ -29,16 +30,18 @@ public class BusinessListingController {
     }
 
     @GetMapping("/search/all")
-    public List<Business> getAll() {
+    public List<BusinessResponseDTO> getAll() {
         List<Business> businesses = businessListingService.getAllActiveBusinesses();
-        return businesses;
+        List<BusinessResponseDTO> businessResponseDTOS = mapEntitiesToResponseDtos(businesses);
+        return businessResponseDTOS;
     }
 
     @GetMapping("/search")
-    public List<Business> getByType(
+    public List<BusinessResponseDTO> getByType(
             @RequestParam(name = "type") BusinessTypeEnum type) {
         List<Business> businesses = businessListingService.getByType(type);
-        return businesses;
+        List<BusinessResponseDTO> businessResponseDTOS = mapEntitiesToResponseDtos(businesses);
+        return businessResponseDTOS;
     }
 
     @PostMapping("/add")
@@ -79,5 +82,11 @@ public class BusinessListingController {
                 entity.getEmail(),
                 entity.getPhoneNumber()
         );
+    }
+
+    private List<BusinessResponseDTO> mapEntitiesToResponseDtos(List<Business> entities) {
+        return entities.stream()
+                .map(this::mapEntityToResponseDto)
+                .collect(Collectors.toList());
     }
 }
