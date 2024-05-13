@@ -9,6 +9,7 @@ import java.util.List;
 public interface BusinessListingService {
     List<Business> getAllActiveBusinesses();
     List<Business> getByType(BusinessTypeEnum type);
+    List<Business> getByNameStartsWith(String name);
     Business addNew(BusinessRequestDTO businessRequestDTO);
     Business update(Long id, BusinessRequestDTO businessRequestDTO);
 }

@@ -45,6 +45,13 @@ public class BusinessListingController {
         return mapEntitiesToResponseDtos(businesses);
     }
 
+    @GetMapping("/search/name")
+    public List<BusinessResponseDTO> getByName(
+            @RequestParam(name = "name") String name) {
+        List<Business> businesses = businessListingService.getByNameStartsWith(name);
+        return mapEntitiesToResponseDtos(businesses);
+    }
+
     @PostMapping("/add")
     public ResponseEntity<BusinessResponseDTO> addNewBusiness(
             @Valid @RequestBody BusinessRequestDTO businessRequestDTO) {

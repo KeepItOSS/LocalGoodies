@@ -11,9 +11,16 @@ public class BusinessSpecs {
             return criteriaBuilder.equal(root.get("active"), true);
         };
     }
+
     public static Specification<Business> isOfType(BusinessTypeEnum type) {
         return (root, query, criteriaBuilder) -> {
             return criteriaBuilder.equal(root.get("type"), type);
+        };
+    }
+
+    public static Specification<Business> nameStartsWith(String name) {
+        return (root, query, criteriaBuilder) -> {
+            return criteriaBuilder.like(root.get("name"), name + "%");
         };
     }
 }

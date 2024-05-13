@@ -43,7 +43,7 @@ public class BusinessListingControllerTest {
         List<Business> businessList = List.of(expectedBusiness);
         when(businessListingService.getAllActiveBusinesses()).thenReturn(businessList);
 
-        mockMvc.perform(get("/api/business-listing/search/all"))
+        mockMvc.perform(get("/api/business-listing/search/active"))
                 .andExpect(status().isOk());
     }
 

@@ -39,6 +39,11 @@ public class BusinessListingServiceImpl implements BusinessListingService {
     }
 
     @Override
+    public List<Business> getByNameStartsWith(String name) {
+        return businessListingRepository.findAll(BusinessSpecs.nameStartsWith(name).and(isActive()));
+    }
+
+    @Override
     public Business addNew(BusinessRequestDTO businessRequestDTO) {
         Business business = createBusinessInstance(businessRequestDTO);
         return businessListingRepository.save(business);

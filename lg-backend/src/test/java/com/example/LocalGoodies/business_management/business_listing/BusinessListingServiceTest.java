@@ -2,6 +2,7 @@ package com.example.LocalGoodies.business_management.business_listing;
 
 import com.example.LocalGoodies.api.business_management.business_listing.BusinessListingRepository;
 import com.example.LocalGoodies.api.business_management.business_listing.BusinessListingServiceImpl;
+import com.example.LocalGoodies.api.business_management.business_listing.BusinessSpecs;
 import com.example.LocalGoodies.api.business_management.model.Business;
 import com.example.LocalGoodies.api.business_management.model.BusinessTypeEnum;
 import com.example.LocalGoodies.api.business_management.model.DTO.BusinessRequestDTO;
@@ -212,4 +213,44 @@ public class BusinessListingServiceTest {
         Assertions.assertEquals(expectedBusiness.getName(), result.getName());
         Assertions.assertEquals("mail@mail.com", result.getEmail());
     }
+
+    @Test
+    void shouldFetchBusinessesByNameStartsWith() {
+        // given
+        String name = "Busi";
+        Business B1 = new Business
+                .Builder("Business1", "Test for B1", BusinessTypeEnum.HANDMADE)
+                .email("handmade@email.com")
+                .phoneNumber("123456789")
+                .build();
+        Business B2 = new Business
+                .Builder("Business2", "Test for B2", BusinessTypeEnum.REPAIR)
+                .email("repair@email.com")
+                .phoneNumber("987654321")
+                .build();
+        List<Business> businesses = List.of(B1, B2);
+        when(businessListingRepository.findAll(BusinessSpecs.nameStartsWith(any()).and(isActive()))).thenReturn(businesses);
+
+        // when
+        List<Business> result = businessListingService.getByNameStartsWith(name);
+
+        // then
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(2, result.size());
+    }
+
+    @Test
+    void shouldFetchEmptyListWhenNoBusinessesWithNameStartsWith() {
+        // given
+        String name = "NonExistent";
+        when(businessListingRepository.findAll(BusinessSpecs.nameStartsWith(any()).and(isActive()))).thenReturn(List.of());
+
+        // when
+        List<Business> result = businessListingService.getByNameStartsWith(name);
+
+        // then
+        Assertions.assertNotNull(result);
+        Assertions.assertTrue(result.isEmpty());
+    }
+
 }
