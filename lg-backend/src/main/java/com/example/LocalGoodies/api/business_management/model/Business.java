@@ -1,5 +1,6 @@
 package com.example.LocalGoodies.api.business_management.model;
 
+import com.example.LocalGoodies.api.business_management.model.DTO.BusinessRequestDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
@@ -42,6 +43,7 @@ public class Business {
         private final String description;
         private final BusinessTypeEnum type;
 
+        private Long id;
         private String phoneNumber = "";
         private String email = "";
 
@@ -52,7 +54,11 @@ public class Business {
         }
 
         public Business build() {
-            return new Business(this, null);
+            return new Business(this);
+        }
+
+        public Builder id(Long val) {
+            id = val; return this;
         }
 
         public Builder phoneNumber(String val) {
@@ -66,8 +72,8 @@ public class Business {
 
     protected Business() { }
 
-    private Business(Builder builder, Long id) {
-        this.id = id;
+    private Business(Builder builder) {
+        this.id = builder.id;
         this.name = builder.name;
         this.description = builder.description;
         this.type = builder.type;
@@ -127,5 +133,19 @@ public class Business {
 
     public BusinessTypeEnum getType() {
         return type;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void update(BusinessRequestDTO businessRequestDTO) {
+        this.name = businessRequestDTO.name();
+        this.description = businessRequestDTO.description();
+        this.type = businessRequestDTO.type();
     }
 }

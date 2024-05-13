@@ -1,8 +1,9 @@
 package com.example.LocalGoodies.api.business_management.business_listing;
 
 import com.example.LocalGoodies.api.business_management.model.Business;
-import com.example.LocalGoodies.api.business_management.model.DTO.BusinessRequestDTO;
 import com.example.LocalGoodies.api.business_management.model.BusinessTypeEnum;
+import com.example.LocalGoodies.api.business_management.model.DTO.BusinessRequestDTO;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +16,10 @@ import static com.example.LocalGoodies.api.business_management.business_listing.
 @Service
 public class BusinessListingServiceImpl implements BusinessListingService {
 
-    private final Pattern EMAIL_PATTERN = Pattern.compile("^(.+)@(.+)$");
+    private final static Pattern EMAIL_PATTERN = Pattern.compile("^(.+)@(.+)$");
     //  phone number regex taken from https://github.com/skotniczny/phonePL
-    private final Pattern PHONE_NUM_PATTERN = Pattern.compile("(?:(?:(?:\\+|00)?48)|(?:\\(\\+?48\\)))?(?:1[2-8]|2[2-69]|3[2-49]|4[1-8]|5[0-9]|6[0-35-9]|[7-8][1-9]|9[145])\\d{7}");
+    private final static Pattern PHONE_NUM_PATTERN = Pattern.compile("(?:(?:(?:\\+|00)?48)|(?:\\(\\+?48\\)))?(?:1[2-8]|2[2-69]|3[2-49]|4[1-8]|5[0-9]|6[0-35-9]|[7-8][1-9]|9[145])\\d{7}");
+
     private final BusinessListingRepository businessListingRepository;
 
     @Autowired
@@ -27,7 +29,7 @@ public class BusinessListingServiceImpl implements BusinessListingService {
     }
 
     @Override
-    public List<Business> getAllBusinesses() {
+    public List<Business> getAllActiveBusinesses() {
         return businessListingRepository.findAll(isActive());
     }
 
@@ -37,30 +39,55 @@ public class BusinessListingServiceImpl implements BusinessListingService {
     }
 
     @Override
+    public List<Business> getByNameStartsWith(String name) {
+        return businessListingRepository.findAll(BusinessSpecs.nameStartsWith(name).and(isActive()));
+    }
+
+    @Override
     public Business addNew(BusinessRequestDTO businessRequestDTO) {
-        Business.Builder businessBuilder = createBusinessBuilderWithRequired(businessRequestDTO);
-        addEmailIfValid(businessRequestDTO.getEmail(), businessBuilder);
-        addPhoneNumberIfValid(businessRequestDTO.getPhoneNumber(), businessBuilder);
-        Business business = businessBuilder.build();
+        Business business = createBusinessInstance(businessRequestDTO);
         return businessListingRepository.save(business);
     }
 
-    private Business.Builder createBusinessBuilderWithRequired(BusinessRequestDTO businessRequestDTO) {
-        return new Business.Builder(
-                businessRequestDTO.getName(),
-                businessRequestDTO.getDescription(),
-                businessRequestDTO.getType());
+    @Override
+    public Business update(Long id, BusinessRequestDTO businessRequestDTO) {
+        Business existingBusiness = getExistingBusiness(id);
+        Business updatedBusiness = updateBusiness(businessRequestDTO, existingBusiness);
+        return businessListingRepository.save(updatedBusiness);
     }
 
-    private void addEmailIfValid(String email, Business.Builder businessBuilder) {
+    private Business updateBusiness(BusinessRequestDTO businessRequestDTO, Business existingBusiness) {
+        existingBusiness.update(businessRequestDTO);
+        addEmailIfValid(businessRequestDTO.email(), existingBusiness);
+        addPhoneNumberIfValid(businessRequestDTO.phoneNumber(), existingBusiness);
+        return existingBusiness;
+    }
+
+    private Business getExistingBusiness(Long id) {
+        return businessListingRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Business with id " + id + " not found"));
+    }
+
+    private Business createBusinessInstance(BusinessRequestDTO businessRequestDTO) {
+        Business business = new Business.Builder(
+                businessRequestDTO.name(),
+                businessRequestDTO.description(),
+                businessRequestDTO.type())
+                .build();
+        addEmailIfValid(businessRequestDTO.email(), business);
+        addPhoneNumberIfValid(businessRequestDTO.phoneNumber(), business);
+        return business;
+    }
+
+    private void addEmailIfValid(String email, Business business) {
         if (email != null && validateEmail(email)) {
-            businessBuilder.email(email);
+            business.setEmail(email);
         }
     }
 
-    private void addPhoneNumberIfValid(String phoneNumber, Business.Builder businessBuilder) {
+    private void addPhoneNumberIfValid(String phoneNumber, Business business) {
         if (phoneNumber != null && validatePhoneNumber(phoneNumber)) {
-            businessBuilder.phoneNumber(phoneNumber);
+            business.setPhoneNumber(phoneNumber);
         }
     }
 
