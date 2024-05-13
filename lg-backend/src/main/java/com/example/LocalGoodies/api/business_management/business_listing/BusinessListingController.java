@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.example.LocalGoodies.api.business_management.model.BusinessMapper.mapEntitiesToResponseDtos;
+import static com.example.LocalGoodies.api.business_management.model.BusinessMapper.mapEntityToResponseDto;
+
 @RestController
 @RequestMapping("api/business-listing")
 public class BusinessListingController {
@@ -32,16 +35,14 @@ public class BusinessListingController {
     @GetMapping("/search/active")
     public List<BusinessResponseDTO> getAllActive() {
         List<Business> businesses = businessListingService.getAllActiveBusinesses();
-        List<BusinessResponseDTO> businessResponseDTOS = mapEntitiesToResponseDtos(businesses);
-        return businessResponseDTOS;
+        return mapEntitiesToResponseDtos(businesses);
     }
 
     @GetMapping("/search")
     public List<BusinessResponseDTO> getByType(
             @RequestParam(name = "type") BusinessTypeEnum type) {
         List<Business> businesses = businessListingService.getByType(type);
-        List<BusinessResponseDTO> businessResponseDTOS = mapEntitiesToResponseDtos(businesses);
-        return businessResponseDTOS;
+        return mapEntitiesToResponseDtos(businesses);
     }
 
     @PostMapping("/add")
@@ -72,21 +73,5 @@ public class BusinessListingController {
             errors.put(fieldName, errorMessage);
         });
         return errors;
-    }
-
-    private BusinessResponseDTO mapEntityToResponseDto(Business entity) {
-        return new BusinessResponseDTO(
-                entity.getName(),
-                entity.getDescription(),
-                entity.getType(),
-                entity.getEmail(),
-                entity.getPhoneNumber()
-        );
-    }
-
-    private List<BusinessResponseDTO> mapEntitiesToResponseDtos(List<Business> entities) {
-        return entities.stream()
-                .map(this::mapEntityToResponseDto)
-                .collect(Collectors.toList());
     }
 }
