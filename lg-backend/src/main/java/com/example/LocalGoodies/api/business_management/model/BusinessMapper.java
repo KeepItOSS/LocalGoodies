@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 public class BusinessMapper {
     public static BusinessResponseDTO mapEntityToResponseDto(Business entity) {
         return new BusinessResponseDTO(
+                entity.getId(),
                 entity.getName(),
                 entity.getDescription(),
                 entity.getType(),
