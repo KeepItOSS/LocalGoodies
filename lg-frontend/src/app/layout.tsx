@@ -17,10 +17,10 @@ export default function RootLayout({
         children: React.ReactNode;
     }>) {
     return (
-        <html lang="en">
+        <html lang="en" data-theme="garden">
             <body className={inter.className}>
                 <Navbar />
-                <main className="flex min-h-screen ">
+                <main className="flex min-h-screen">
                     {children}
                 </main>
                 <Footer />

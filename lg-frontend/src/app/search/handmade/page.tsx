@@ -1,4 +1,4 @@
-import RenderBusinesList from "@/components/business-list";
+import RenderBusinesList from "@/components/card-business";
 import { Business } from "../../../models/business";
 import { getBusinesses } from "@/http/business-listing";
 
