@@ -2,12 +2,14 @@
 
 import { getBusinessByQueryName } from "@/http/business-listing";
 import { Business } from "@/models/business";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function SearchPanel() {
     // todo 14.05.2024 fill initial state with suggestions after caching is implemented
     const [businesses, setBusinesses] = useState<Business[]>([]);
     const [query, setQuery] = useState<string>('');
+    const [isInputFocused, setIsInputFocused] = useState<boolean>(false);
     const inputQuery = debounceInputQuery(query, 500);
 
     useEffect(() => {
@@ -24,40 +26,43 @@ export default function SearchPanel() {
     }, [inputQuery]);
 
     return (
-        <div className="absolute container mx-auto flex flex-col items-center justify-center">
-            <div className="flex flex-row p-4 w-3/12 rounded border-2 border-gray-600 focus:outline-none focus:border-b-2 focus:border-b-black-800">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                </svg>
-                <label htmlFor="search" className="sr-only">Search</label>
-                <input
-                    className="pl-2 focus:outline-none"
-                    type="search"
-                    placeholder="Looking for something?"
-                    defaultValue={''}
-                    onChange={(e) => {
-                        setQuery(e.target.value);
-                    }}
-                />
+        <div className="container mx-auto flex flex-col items-center justify-center pt-5">
+            <div className="relative">
+                <label htmlFor="search" className="input input-lg input-bordered flex w-full items-center gap-2">
+                    <input
+                        type="search"
+                        placeholder="What are you looking for?"
+                        defaultValue={''}
+                        onChange={(e) => {
+                            setQuery(e.target.value);
+                        }}
+                        onFocus={() => setIsInputFocused(true)}
+                        onBlur={() => setIsInputFocused(false)}
+                    />
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-4 h-4 opacity-70"><path fillRule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clipRule="evenodd" /></svg>
+                </label>
+                {isInputFocused && <SearchResultList business={businesses} />}
             </div>
-            <SearchResults business={businesses} />
         </div>
     );
 }
 
-function SearchResults({ business }: { business: Business[] }) {
+function SearchResultList({ business }: { business: Business[] }) {
     return (
-        <div id="b-list" className="flex items-center justify-center w-3/12 bg-red-800">
-            {business.length > 0 && (
-                <ul className="w-full">
-                    {business.map((business: Business) => (
-                        <li className="flex pl-12 p-2 border-b-2 items-center w-full"
-                            key={business.id}>
-                            <button>{business.name} {business.type.toLowerCase()}</button>
+        <div className="absolute pt-2 left-0 z-10 w-full">
+            <div className="border bg-base-100 border-accent shadow-xl h-48 overflow-y-auto">
+                <ul className="divide-y divide-base-100 p-2">
+                    {business.length > 0 && (business.map((business: Business) =>
+                        <li key={business.email} className="flex justify-center p-2">
+                            <div className="flex items-center justify-between">
+                                <button className="btn btn-ghost">
+                                    <Link href={`/business/${business.email}`}> <span>{business.name}</span> </Link>
+                                </button>
+                            </div>
                         </li>
                     ))}
                 </ul>
-            )}
+            </div>
         </div>
     );
 }

@@ -17,7 +17,7 @@ export default function RootLayout({
         children: React.ReactNode;
     }>) {
     return (
-        <html lang="en" data-theme="garden">
+        <html lang="en">
             <body className={inter.className}>
                 <Navbar />
                 <main className="flex min-h-screen">

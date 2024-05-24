@@ -1,5 +1,5 @@
-'use client'
 import Link from "next/link";
+import ThemeController from "./ThemeController";
 
 export function Navbar() {
     return (
@@ -7,13 +7,13 @@ export function Navbar() {
             <MobileNavigation />
             <DesktopNavigation />
             <div className="navbar-end">
-                <a className="btn">Button</a>
+                <ThemeController />
             </div>
         </div>
     )
 }
 
-export function MobileNavigation() {
+function MobileNavigation() {
     return (
         <div className="navbar-start">
             <div className="dropdown">
