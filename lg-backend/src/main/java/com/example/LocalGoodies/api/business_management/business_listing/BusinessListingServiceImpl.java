@@ -44,6 +44,12 @@ public class BusinessListingServiceImpl implements BusinessListingService {
     }
 
     @Override
+    public Page<Business> getPageByActive(Integer page) {
+        Pageable pageRequest = Pageable.ofSize(UNIFORM_PAGE_SIZE).withPage(page);
+        return businessListingRepository.findAll(isActive(), pageRequest);
+    }
+
+    @Override
     public List<Business> getByNameStartsWith(String name) {
         return businessListingRepository.findAll(BusinessSpecs.nameStartsWith(name).and(isActive()));
     }

@@ -41,6 +41,13 @@ public class BusinessListingController {
         return mapEntitiesToResponseDtos(businesses);
     }
 
+    @GetMapping("/search/active/page")
+    public Page<Business> getPages(
+            @RequestParam(name = "page") Integer page
+    ) {
+        return businessListingService.getPageByActive(page);
+    }
+
     @GetMapping("/search")
     public List<BusinessResponseDTO> getByType(
             @RequestParam(name = "type") BusinessTypeEnum type,

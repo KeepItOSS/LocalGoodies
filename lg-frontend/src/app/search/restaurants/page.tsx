@@ -1,9 +1,9 @@
 import RenderBusinesList from "@/components/card-business";
 import { Business } from "../../../models/business";
-import { getBusinesses } from "@/http/business-listing";
+import { getBusinessesPaged } from "@/http/business-listing";
 
 export default async function Page() {
-    let business: Business[] = await getBusinesses("RESTAURANT");
+    let business: Business[] = await getBusinessesPaged("RESTAURANT", 0);
 
     return (
         <RenderBusinesList businesses={business} />
