@@ -13,6 +13,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +24,7 @@ import static com.example.LocalGoodies.api.business_management.business_listing.
 import static com.example.LocalGoodies.api.business_management.business_listing.BusinessSpecs.isOfType;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,9 +50,13 @@ public class BusinessListingServiceTest {
                 .phoneNumber("987654321")
                 .build();
         List<Business> businesses = List.of(B1, B2);
-        when(businessListingRepository.findAll(isActive())).thenReturn(businesses);
+        Page<Business> page = new PageImpl<>(businesses);
+        when(businessListingRepository.findAll(eq(isActive()), any(Pageable.class))).thenReturn(page);
+
         // when
-        List<Business> result = businessListingService.getAllActiveBusinesses();
+        Integer pageNumber = 0;
+        List<Business> result = businessListingService.getAllActiveBusinesses(pageNumber);
+
         // then
         Assertions.assertNotNull(result);
         Assertions.assertEquals(2, result.size());
@@ -64,9 +72,13 @@ public class BusinessListingServiceTest {
                 .phoneNumber("123456789")
                 .build();
         List<Business> businesses = List.of(B1);
-        when(businessListingRepository.findAll(isOfType(any()).and(isActive()))).thenReturn(businesses);
+        Page<Business> page = new PageImpl<>(businesses);
+        when(businessListingRepository.findAll(isOfType(any()).and(isActive()), any(Pageable.class))).thenReturn(page);
+
         // when
-        List<Business> result = businessListingService.getByType(type);
+        Integer pageNumber = 0;
+        List<Business> result = businessListingService.getByType(type, pageNumber);
+
         // then
         Assertions.assertNotNull(result);
         Assertions.assertEquals(1, result.size());

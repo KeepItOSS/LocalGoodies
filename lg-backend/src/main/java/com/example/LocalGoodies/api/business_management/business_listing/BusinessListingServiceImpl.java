@@ -5,6 +5,8 @@ import com.example.LocalGoodies.api.business_management.model.BusinessTypeEnum;
 import com.example.LocalGoodies.api.business_management.model.DTO.BusinessRequestDTO;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +21,7 @@ public class BusinessListingServiceImpl implements BusinessListingService {
     private final static Pattern EMAIL_PATTERN = Pattern.compile("^(.+)@(.+)$");
     //  phone number regex taken from https://github.com/skotniczny/phonePL
     private final static Pattern PHONE_NUM_PATTERN = Pattern.compile("(?:(?:(?:\\+|00)?48)|(?:\\(\\+?48\\)))?(?:1[2-8]|2[2-69]|3[2-49]|4[1-8]|5[0-9]|6[0-35-9]|[7-8][1-9]|9[145])\\d{7}");
+    private final static Integer UNIFORM_PAGE_SIZE = 5;
 
     private final BusinessListingRepository businessListingRepository;
 
@@ -29,13 +32,15 @@ public class BusinessListingServiceImpl implements BusinessListingService {
     }
 
     @Override
-    public List<Business> getAllActiveBusinesses() {
-        return businessListingRepository.findAll(isActive());
+    public List<Business> getAllActiveBusinesses(Integer page) {
+        Pageable pageRequest = Pageable.ofSize(UNIFORM_PAGE_SIZE).withPage(page);
+        return businessListingRepository.findAll(isActive(), pageRequest).getContent();
     }
 
     @Override
-    public List<Business> getByType(BusinessTypeEnum type) {
-        return businessListingRepository.findAll(isOfType(type).and(isActive()));
+    public List<Business> getByType(BusinessTypeEnum type, Integer page) {
+        Pageable pageRequest = Pageable.ofSize(UNIFORM_PAGE_SIZE).withPage(page);
+        return businessListingRepository.findAll(isOfType(type).and(isActive()), pageRequest).getContent();
     }
 
     @Override

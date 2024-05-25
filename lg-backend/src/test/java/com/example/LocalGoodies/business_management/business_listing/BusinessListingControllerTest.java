@@ -41,9 +41,11 @@ public class BusinessListingControllerTest {
     public void whenGetRequestToFetchAllBusiness_thenReturnBusinessList() throws Exception {
         Business expectedBusiness = new Business.Builder("TEST", "DESCRIPTION", BusinessTypeEnum.HANDMADE).build();
         List<Business> businessList = List.of(expectedBusiness);
-        when(businessListingService.getAllActiveBusinesses()).thenReturn(businessList);
+        Integer pageNumber = 0;
+        when(businessListingService.getAllActiveBusinesses(pageNumber)).thenReturn(businessList);
 
-        mockMvc.perform(get("/api/business-listing/search/active"))
+        mockMvc.perform(get("/api/business-listing/search/active")
+                        .param("page", pageNumber.toString()))
                 .andExpect(status().isOk());
     }
 
@@ -51,9 +53,11 @@ public class BusinessListingControllerTest {
     public void whenGetRequestToFetchBusinessByType_thenReturnBusinessList() throws Exception {
         Business expectedBusiness = new Business.Builder("TEST", "DESCRIPTION", BusinessTypeEnum.HANDMADE).build();
         List<Business> businessList = List.of(expectedBusiness);
-        when(businessListingService.getAllActiveBusinesses()).thenReturn(businessList);
+        Integer pageNumber = 0;
+        when(businessListingService.getAllActiveBusinesses(pageNumber)).thenReturn(businessList);
 
         mockMvc.perform(get("/api/business-listing/search")
+                        .param("page", pageNumber.toString())
                         .param("type", "HANDMADE"))
                 .andExpect(status().isOk());
     }

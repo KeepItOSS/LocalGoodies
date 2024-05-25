@@ -6,6 +6,7 @@ import com.example.LocalGoodies.api.business_management.model.DTO.BusinessReques
 import com.example.LocalGoodies.api.business_management.model.DTO.BusinessResponseDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -33,15 +34,18 @@ public class BusinessListingController {
     }
 
     @GetMapping("/search/active")
-    public List<BusinessResponseDTO> getAllActive() {
-        List<Business> businesses = businessListingService.getAllActiveBusinesses();
+    public List<BusinessResponseDTO> getAllActive(
+            @RequestParam(name = "page") Integer page
+    ) {
+        List<Business> businesses = businessListingService.getAllActiveBusinesses(page);
         return mapEntitiesToResponseDtos(businesses);
     }
 
     @GetMapping("/search")
     public List<BusinessResponseDTO> getByType(
-            @RequestParam(name = "type") BusinessTypeEnum type) {
-        List<Business> businesses = businessListingService.getByType(type);
+            @RequestParam(name = "type") BusinessTypeEnum type,
+            @RequestParam(name = "page") Integer page) {
+        List<Business> businesses = businessListingService.getByType(type, page);
         return mapEntitiesToResponseDtos(businesses);
     }
 
