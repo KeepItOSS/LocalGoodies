@@ -37,7 +37,7 @@ export default function SearchPanel() {
                             setQuery(e.target.value);
                         }}
                         onFocus={() => setIsInputFocused(true)}
-                        onBlur={() => setIsInputFocused(false)}
+                        onBlur={() => { setTimeout(() => {setIsInputFocused(false)} , 200) }}
                     />
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-4 h-4 opacity-70"><path fillRule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clipRule="evenodd" /></svg>
                 </label>
@@ -50,14 +50,16 @@ export default function SearchPanel() {
 function SearchResultList({ business }: { business: Business[] }) {
     return (
         <div className="absolute pt-2 left-0 z-10 w-full">
-            <div className="border bg-base-100 border-accent shadow-xl h-48 overflow-y-auto">
+            <div className="border bg-base-100 border-base rounded shadow-xl h-48 overflow-y-auto">
                 <ul className="divide-y divide-base-100 p-2">
                     {business.length > 0 && (business.map((business: Business) =>
-                        <li key={business.email} className="flex justify-center p-2">
+                        <li key={business.id} className="flex justify-center p-2">
                             <div className="flex items-center justify-between">
-                                <button className="btn btn-ghost">
-                                    <Link href={`/business/${business.email}`}> <span>{business.name}</span> </Link>
-                                </button>
+                                <Link href={`/business/#`}> 
+                                    <button className="btn btn-ghost">
+                                        <span>{business.name} </span>
+                                    </button>
+                                </Link>
                             </div>
                         </li>
                     ))}

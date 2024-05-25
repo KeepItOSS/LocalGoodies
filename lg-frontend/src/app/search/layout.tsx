@@ -8,7 +8,7 @@ export default function SearchLayout({
         children: React.ReactNode
     }) {
     return (
-        <div className="flex flex-col mx-auto items-center justify-center">
+        <div className="flex flex-col items-center justify-center">
             <BusinessTypeListing />
             <SearchPanel />
             {children}
