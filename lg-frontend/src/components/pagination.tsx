@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 type pageProps = { currentPage: number, maxPage: number };
 
 export default function Paginate({ currentPage, maxPage }: pageProps) {
+
     const pathname = usePathname();
     const searchParams = new URLSearchParams();
 

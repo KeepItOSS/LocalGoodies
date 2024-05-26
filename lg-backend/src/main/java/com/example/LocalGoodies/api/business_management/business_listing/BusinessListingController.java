@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.example.LocalGoodies.api.business_management.model.BusinessMapper.mapEntitiesToResponseDtos;
 import static com.example.LocalGoodies.api.business_management.model.BusinessMapper.mapEntityToResponseDto;
@@ -36,25 +35,18 @@ public class BusinessListingController {
     }
 
     @GetMapping("/search/active")
-    public List<BusinessResponseDTO> getAllActive(
-            @RequestParam(name = "page") Integer page
-    ) {
-        List<Business> businesses = businessListingService.getAllActiveBusinesses(page);
+    public Page<BusinessResponseDTO> getPagedBusinesses(
+            @PageableDefault(size = 5) Pageable pageable
+            ) {
+        Page<Business> businesses = businessListingService.getPaged(pageable);
         return mapEntitiesToResponseDtos(businesses);
     }
 
-    @GetMapping("/search/active/page")
-    public Page<Business> getPages(
-            @PageableDefault(size = 5) Pageable pageable
-            ) {
-        return businessListingService.getPageByActive(pageable);
-    }
-
     @GetMapping("/search")
-    public List<BusinessResponseDTO> getByType(
-            @RequestParam(name = "type") BusinessTypeEnum type,
-            @RequestParam(name = "page") Integer page) {
-        List<Business> businesses = businessListingService.getByType(type, page);
+    public Page<BusinessResponseDTO> getPagedBusinessesByType(
+            @PageableDefault(size = 5) Pageable pageable,
+            @RequestParam(name = "type") BusinessTypeEnum type) {
+        Page<Business> businesses = businessListingService.getPagedByType(pageable, type);
         return mapEntitiesToResponseDtos(businesses);
     }
 

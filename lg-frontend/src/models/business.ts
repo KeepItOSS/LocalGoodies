@@ -24,3 +24,10 @@ export type BusinessPage = {
     numberOfElements: number,
     empty: boolean
 }
+
+export interface SearchParamProps {
+    searchParams?: {
+        page?: string;
+        query?: string;
+    };
+}

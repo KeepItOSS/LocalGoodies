@@ -1,11 +1,21 @@
 import RenderBusinesList from "@/components/card-business";
-import { Business } from "../../../models/business";
-import { getBusinessesPaged } from "@/http/business-listing";
+import { BusinessPage, SearchParamProps } from "../../../models/business";
+import { getBusinessesByType } from "@/http/business-listing";
+import Paginate from "@/components/pagination";
 
-export default async function Page() {
-    let business: Business[] = await getBusinessesPaged("REPAIR", 0);
+export default async function Page({ searchParams }: Readonly<SearchParamProps>) {
+    const currentPage = Number(searchParams?.page || 1);
 
+    let businesses: BusinessPage = await getBusinessesByType(currentPage, "REPAIR");
+
+    if (!businesses) return null;
     return (
-        <RenderBusinesList businesses={business} />
+        <>
+            <RenderBusinesList 
+                businesses={businesses.content} />
+            <Paginate
+                currentPage={currentPage} 
+                maxPage={businesses.totalPages} />
+        </>
     );
 }

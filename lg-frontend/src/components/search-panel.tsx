@@ -5,6 +5,7 @@ import { Business } from "@/models/business";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+// think about using path params when searching 
 export default function SearchPanel() {
     // todo 14.05.2024 fill initial state with suggestions after caching is implemented
     const [businesses, setBusinesses] = useState<Business[]>([]);

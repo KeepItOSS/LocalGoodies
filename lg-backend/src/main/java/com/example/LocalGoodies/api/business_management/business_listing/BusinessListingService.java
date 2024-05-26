@@ -9,9 +9,8 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface BusinessListingService {
-    List<Business> getAllActiveBusinesses(Integer page);
-    List<Business> getByType(BusinessTypeEnum type, Integer page);
-    Page<Business> getPageByActive(Pageable pageable);
+    Page<Business> getPagedByType(Pageable pageable, BusinessTypeEnum type);
+    Page<Business> getPaged(Pageable pageable);
 
     List<Business> getByNameStartsWith(String name);
     Business addNew(BusinessRequestDTO businessRequestDTO);
