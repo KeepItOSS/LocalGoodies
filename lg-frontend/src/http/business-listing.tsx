@@ -14,7 +14,6 @@ export async function getBusinessesPaged(queryParam: string, page: number): Prom
 }
 
 export async function getBusinessesPagedAsPage(page: number): Promise<BusinessPage> {
-    noStore();
     try {
         const response = await fetch(BASE_URL + `/search/active/page?page=${page}`);
         return response.json();

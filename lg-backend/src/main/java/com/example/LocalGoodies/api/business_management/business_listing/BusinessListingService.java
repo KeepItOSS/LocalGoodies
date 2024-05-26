@@ -11,7 +11,7 @@ import java.util.List;
 public interface BusinessListingService {
     List<Business> getAllActiveBusinesses(Integer page);
     List<Business> getByType(BusinessTypeEnum type, Integer page);
-    Page<Business> getPageByActive(Integer page);
+    Page<Business> getPageByActive(Pageable pageable);
 
     List<Business> getByNameStartsWith(String name);
     Business addNew(BusinessRequestDTO businessRequestDTO);

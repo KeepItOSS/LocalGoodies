@@ -1,39 +1,43 @@
 'use client';
 
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
 
-// fix the bug where the page number gets added when we click the next button
-// add clause to check if user goes below 0 in page count
-// maybe add debounce on buttons 
-export default function Paginate() {
+type pageProps = { currentPage: number, maxPage: number };
+
+export default function Paginate({ currentPage, maxPage }: pageProps) {
     const pathname = usePathname();
     const searchParams = new URLSearchParams();
-    const [page, setPage] = useState(Number(searchParams.get('page') || 1));
 
-    const createPageURL = (pageNumber: number | string) => {
+    const pageDown = () => {
+        if (currentPage === maxPage) return;
+        router.push(createPageURL(currentPage + 1));
+    }
+
+    const pageUp = () => {
+        if (currentPage === 1) return;
+        router.push(createPageURL(currentPage - 1));
+    }
+
+    function createPageURL(pageNumber: number | string) {
         const params = new URLSearchParams(searchParams);
         params.set('page', String(pageNumber));
-        return `${pathname}?${params.toString()}`;
-    };
+        return `${pathname}?${params}`;
+    }; 
 
-    function handlePageForward() {
-        setPage(page + 1);
-        router.push(createPageURL(page));
-    }
-
-    function handlePageBackward() {
-        setPage(page - 1);
-        router.push(createPageURL(page));
-    }
 
     const router = useRouter();
 
     return (
-        <div className="join">
-            <button className="join-item btn" onClick={handlePageBackward}>«</button>
-            <button className="join-item btn">{ page }</button>
-            <button className="join-item btn" onClick={handlePageForward}>»</button>
+        <div className="pt-5 join">
+            <button
+                className="join-item btn"
+                onClick={pageUp}> « </button>
+
+            <button className="join-item btn">{ currentPage } </button>
+
+            <button 
+                className="join-item btn" 
+                onClick={pageDown}> » </button>
         </div>
     );
 }

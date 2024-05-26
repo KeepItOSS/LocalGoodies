@@ -1,5 +1,5 @@
 import Link from "next/link";
-import ThemeController from "./ThemeController";
+import ThemeController from "./theme-controller";
 
 export function Navbar() {
     return (

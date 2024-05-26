@@ -7,6 +7,8 @@ import com.example.LocalGoodies.api.business_management.model.DTO.BusinessRespon
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -43,9 +45,9 @@ public class BusinessListingController {
 
     @GetMapping("/search/active/page")
     public Page<Business> getPages(
-            @RequestParam(name = "page") Integer page
-    ) {
-        return businessListingService.getPageByActive(page);
+            @PageableDefault(size = 5) Pageable pageable
+            ) {
+        return businessListingService.getPageByActive(pageable);
     }
 
     @GetMapping("/search")

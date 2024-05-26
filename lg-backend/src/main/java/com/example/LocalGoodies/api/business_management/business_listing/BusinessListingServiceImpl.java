@@ -44,9 +44,8 @@ public class BusinessListingServiceImpl implements BusinessListingService {
     }
 
     @Override
-    public Page<Business> getPageByActive(Integer page) {
-        Pageable pageRequest = Pageable.ofSize(UNIFORM_PAGE_SIZE).withPage(page);
-        return businessListingRepository.findAll(isActive(), pageRequest);
+    public Page<Business> getPageByActive(Pageable pageable){
+        return businessListingRepository.findAll(isActive(), pageable);
     }
 
     @Override
