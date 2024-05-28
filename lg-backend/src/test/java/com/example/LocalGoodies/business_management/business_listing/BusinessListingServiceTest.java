@@ -50,16 +50,20 @@ public class BusinessListingServiceTest {
                 .phoneNumber("987654321")
                 .build();
         List<Business> businesses = List.of(B1, B2);
-        Page<Business> page = new PageImpl<>(businesses);
+
+        Pageable pageInfo = Pageable.ofSize(2).withPage(0);
+        long totalElements = 1;
+        Page<Business> page = new PageImpl<>(businesses, pageInfo, totalElements);
         when(businessListingRepository.findAll(eq(isActive()), any(Pageable.class))).thenReturn(page);
 
         // when
-        Integer pageNumber = 0;
-        List<Business> result = businessListingService.getAllActiveBusinesses(pageNumber);
+        Page<Business> result = businessListingService.getPaged(pageInfo);
 
         // then
         Assertions.assertNotNull(result);
-        Assertions.assertEquals(2, result.size());
+        Assertions.assertEquals(page.getTotalElements(), result.getTotalElements());
+        Assertions.assertEquals(page.getContent().size(), result.getContent().size());
+        Assertions.assertEquals(page.getContent().getFirst().getName(), result.getContent().getFirst().getName());
     }
 
     @Test
@@ -72,17 +76,22 @@ public class BusinessListingServiceTest {
                 .phoneNumber("123456789")
                 .build();
         List<Business> businesses = List.of(B1);
-        Page<Business> page = new PageImpl<>(businesses);
+
+        Pageable pageInfo = Pageable.ofSize(2).withPage(0);
+        long totalElements = 1;
+        Page<Business> page = new PageImpl<>(businesses, pageInfo, totalElements);
+
         when(businessListingRepository.findAll(isOfType(any()).and(isActive()), any(Pageable.class))).thenReturn(page);
 
         // when
         Integer pageNumber = 0;
-        List<Business> result = businessListingService.getByType(type, pageNumber);
+        Page<Business> result = businessListingService.getPagedByType(pageInfo, type);
 
         // then
         Assertions.assertNotNull(result);
-        Assertions.assertEquals(1, result.size());
-        Assertions.assertEquals(BusinessTypeEnum.HANDMADE, result.getFirst().getType());
+        Assertions.assertEquals(page.getTotalElements(), result.getTotalElements());
+        Assertions.assertEquals(page.getContent().size(), result.getContent().size());
+        Assertions.assertEquals(page.getContent().getFirst().getType(), result.getContent().getFirst().getType());
     }
 
     @Test
@@ -116,7 +125,10 @@ public class BusinessListingServiceTest {
                 BusinessTypeEnum.HANDMADE,
                 null,
                 "test@test.com");
-        Business expectedBusiness = new Business.Builder("TEST", "DESCRIPTION", BusinessTypeEnum.HANDMADE).email("test@test.com").build();
+        Business expectedBusiness = new Business
+                .Builder("TEST", "DESCRIPTION", BusinessTypeEnum.HANDMADE)
+                .email("test@test.com")
+                .build();
 
         when(businessListingRepository.save(any(Business.class))).thenReturn(expectedBusiness);
 
@@ -138,7 +150,10 @@ public class BusinessListingServiceTest {
                 BusinessTypeEnum.HANDMADE,
                 "+48123456789",
                 null);
-        Business expectedBusiness = new Business.Builder("TEST", "DESCRIPTION", BusinessTypeEnum.HANDMADE).phoneNumber("+48123123123").build();
+        Business expectedBusiness = new Business
+                .Builder("TEST", "DESCRIPTION", BusinessTypeEnum.HANDMADE)
+                .phoneNumber("+48123123123")
+                .build();
 
         when(businessListingRepository.save(any(Business.class))).thenReturn(expectedBusiness);
 
@@ -161,8 +176,14 @@ public class BusinessListingServiceTest {
                 BusinessTypeEnum.HANDMADE,
                 "updated@email.com",
                 "987654321");
-        Business existingBusiness = new Business.Builder("Existing Business", "Existing Description", BusinessTypeEnum.HANDMADE).build();
-        Business expectedBusiness = new Business.Builder("Updated Business", "Updated Description", BusinessTypeEnum.HANDMADE).email("updated@email.com").phoneNumber("987654321").build();
+        Business existingBusiness = new Business
+                .Builder("Existing Business", "Existing Description", BusinessTypeEnum.HANDMADE)
+                .build();
+        Business expectedBusiness = new Business
+                .Builder("Updated Business", "Updated Description", BusinessTypeEnum.HANDMADE)
+                .email("updated@email.com")
+                .phoneNumber("987654321")
+                .build();
 
         when(businessListingRepository.findById(id)).thenReturn(Optional.of(existingBusiness));
         when(businessListingRepository.save(any(Business.class))).thenReturn(expectedBusiness);
@@ -213,7 +234,10 @@ public class BusinessListingServiceTest {
                 BusinessTypeEnum.HANDMADE,
                 "invalid-email",
                 null);
-        Business expectedBusiness = new Business.Builder("TEST", "DESCRIPTION", BusinessTypeEnum.HANDMADE).email("mail@mail.com").build();
+        Business expectedBusiness = new Business
+                .Builder("TEST", "DESCRIPTION", BusinessTypeEnum.HANDMADE)
+                .email("mail@mail.com")
+                .build();
 
         when(businessListingRepository.save(any(Business.class))).thenReturn(expectedBusiness);
 
@@ -241,7 +265,8 @@ public class BusinessListingServiceTest {
                 .phoneNumber("987654321")
                 .build();
         List<Business> businesses = List.of(B1, B2);
-        when(businessListingRepository.findAll(BusinessSpecs.nameStartsWith(any()).and(isActive()))).thenReturn(businesses);
+        when(businessListingRepository
+                .findAll(BusinessSpecs.nameStartsWith(any()).and(isActive()))).thenReturn(businesses);
 
         // when
         List<Business> result = businessListingService.getByNameStartsWith(name);
@@ -255,7 +280,8 @@ public class BusinessListingServiceTest {
     void shouldFetchEmptyListWhenNoBusinessesWithNameStartsWith() {
         // given
         String name = "NonExistent";
-        when(businessListingRepository.findAll(BusinessSpecs.nameStartsWith(any()).and(isActive()))).thenReturn(List.of());
+        when(businessListingRepository
+                .findAll(BusinessSpecs.nameStartsWith(any()).and(isActive()))).thenReturn(List.of());
 
         // when
         List<Business> result = businessListingService.getByNameStartsWith(name);
@@ -264,5 +290,4 @@ public class BusinessListingServiceTest {
         Assertions.assertNotNull(result);
         Assertions.assertTrue(result.isEmpty());
     }
-
 }

@@ -13,6 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -21,7 +24,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = BusinessListingController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -38,28 +41,253 @@ public class BusinessListingControllerTest {
     ObjectMapper objectMapper;
 
     @Test
-    public void whenGetRequestToFetchAllBusiness_thenReturnBusinessList() throws Exception {
-        Business expectedBusiness = new Business.Builder("TEST", "DESCRIPTION", BusinessTypeEnum.HANDMADE).build();
-        List<Business> businessList = List.of(expectedBusiness);
-        Integer pageNumber = 0;
-        when(businessListingService.getAllActiveBusinesses(pageNumber)).thenReturn(businessList);
+    public void whenGetRequestToFetchAllBusiness_noParams_thenReturnBusinessList() throws Exception {
+        // given
+        Business expectedBusiness = new Business
+                .Builder("TEST", "DESCRIPTION", BusinessTypeEnum.HANDMADE)
+                .build();
+        List<Business> pageContent = List.of(expectedBusiness);
+        Pageable pageInfo = Pageable.ofSize(1).withPage(0);
+        long totalElements = 1;
+        Page<Business> page = new PageImpl<>(pageContent, pageInfo, totalElements);
 
-        mockMvc.perform(get("/api/business-listing/search/active")
-                        .param("page", pageNumber.toString()))
-                .andExpect(status().isOk());
+        when(businessListingService.getPaged(any()))
+                .thenReturn(page);
+
+        // when / then
+        mockMvc.perform(get("/api/business-listing/search/active"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("$.content[0].name").value(expectedBusiness.getName()))
+                .andExpect(jsonPath("$.content[0].description").value(expectedBusiness.getDescription()))
+                .andExpect(jsonPath("$.content[0].type").value(expectedBusiness.getType().toString()))
+                .andExpect(jsonPath("$.content[0].phoneNumber").value(expectedBusiness.getPhoneNumber()))
+
+                .andExpect(jsonPath("$.pageable.pageSize").value(pageInfo.getPageSize()))
+                .andExpect(jsonPath("$.pageable.pageNumber").value(pageInfo.getPageNumber()))
+                .andExpect(jsonPath("$.totalElements").value(totalElements));
     }
 
     @Test
-    public void whenGetRequestToFetchBusinessByType_thenReturnBusinessList() throws Exception {
-        Business expectedBusiness = new Business.Builder("TEST", "DESCRIPTION", BusinessTypeEnum.HANDMADE).build();
-        List<Business> businessList = List.of(expectedBusiness);
-        Integer pageNumber = 0;
-        when(businessListingService.getAllActiveBusinesses(pageNumber)).thenReturn(businessList);
+    public void whenGetRequestToFetchAllBusiness_withPage_thenReturnBusinessList() throws Exception {
+        // given
+        Business expectedBusiness = new Business
+                .Builder("TEST", "DESCRIPTION", BusinessTypeEnum.HANDMADE)
+                .build();
+        List<Business> pageContent = List.of(expectedBusiness);
+        Pageable pageInfo = Pageable.ofSize(1).withPage(0);
+        long totalElements = 1;
+        Page<Business> page = new PageImpl<>(pageContent, pageInfo, totalElements);
 
+        when(businessListingService.getPaged(any()))
+                .thenReturn(page);
+
+        // when / then
+        mockMvc.perform(get("/api/business-listing/search/active")
+                        .param("page", String.valueOf(pageInfo.getPageNumber())))
+
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("$.content[0].name").value(expectedBusiness.getName()))
+                .andExpect(jsonPath("$.content[0].description").value(expectedBusiness.getDescription()))
+                .andExpect(jsonPath("$.content[0].type").value(expectedBusiness.getType().toString()))
+                .andExpect(jsonPath("$.content[0].phoneNumber").value(expectedBusiness.getPhoneNumber()))
+
+                .andExpect(jsonPath("$.pageable.pageSize").value(pageInfo.getPageSize()))
+                .andExpect(jsonPath("$.pageable.pageNumber").value(pageInfo.getPageNumber()))
+                .andExpect(jsonPath("$.totalElements").value(totalElements));
+    }
+
+    @Test
+    public void whenGetRequestToFetchAllBusiness_withPageAndSizeParam_thenReturnBusinessList() throws Exception {
+        // given
+        Business expectedBusiness = new Business
+                .Builder("TEST", "DESCRIPTION", BusinessTypeEnum.HANDMADE)
+                .build();
+        List<Business> pageContent = List.of(expectedBusiness);
+        Pageable pageInfo = Pageable.ofSize(1).withPage(0);
+        long totalElements = 1;
+        Page<Business> page = new PageImpl<>(pageContent, pageInfo, totalElements);
+
+        when(businessListingService.getPaged(any()))
+                .thenReturn(page);
+
+        // when / then
+        mockMvc.perform(get("/api/business-listing/search/active")
+                        .param("page", String.valueOf(pageInfo.getPageNumber()))
+                        .param("size", String.valueOf(pageInfo.getPageSize())))
+
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("$.content[0].name").value(expectedBusiness.getName()))
+                .andExpect(jsonPath("$.content[0].description").value(expectedBusiness.getDescription()))
+                .andExpect(jsonPath("$.content[0].type").value(expectedBusiness.getType().toString()))
+                .andExpect(jsonPath("$.content[0].phoneNumber").value(expectedBusiness.getPhoneNumber()))
+
+                .andExpect(jsonPath("$.pageable.pageSize").value(pageInfo.getPageSize()))
+                .andExpect(jsonPath("$.pageable.pageNumber").value(pageInfo.getPageNumber()))
+                .andExpect(jsonPath("$.totalElements").value(totalElements));
+    }
+
+    @Test
+    public void whenGetRequestToFetchAllBusiness_withRandomStringSize_thenReturnBusinessList() throws Exception {
+        // given
+        Business expectedBusiness = new Business
+                .Builder("TEST", "DESCRIPTION", BusinessTypeEnum.HANDMADE)
+                .build();
+        List<Business> pageContent = List.of(expectedBusiness);
+        Pageable pageInfo = Pageable.ofSize(1).withPage(0);
+        long totalElements = 1;
+        Page<Business> page = new PageImpl<>(pageContent, pageInfo, totalElements);
+
+        when(businessListingService.getPaged(any()))
+                .thenReturn(page);
+
+        // when / then
+        mockMvc.perform(get("/api/business-listing/search/active")
+                        .param("size", "I am random invalid size value"))
+
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("$.content[0].name").value(expectedBusiness.getName()))
+                .andExpect(jsonPath("$.content[0].description").value(expectedBusiness.getDescription()))
+                .andExpect(jsonPath("$.content[0].type").value(expectedBusiness.getType().toString()))
+                .andExpect(jsonPath("$.content[0].phoneNumber").value(expectedBusiness.getPhoneNumber()))
+
+                .andExpect(jsonPath("$.pageable.pageSize").value(pageInfo.getPageSize()))
+                .andExpect(jsonPath("$.pageable.pageNumber").value(pageInfo.getPageNumber()))
+                .andExpect(jsonPath("$.totalElements").value(totalElements));
+    }
+
+    @Test
+    public void whenGetRequestToFetchAllBusiness_withRandomStringPage_thenReturnBusinessList() throws Exception {
+        // given
+        Business expectedBusiness = new Business
+                .Builder("TEST", "DESCRIPTION", BusinessTypeEnum.HANDMADE)
+                .build();
+        List<Business> pageContent = List.of(expectedBusiness);
+        Pageable pageInfo = Pageable.ofSize(1).withPage(0);
+        long totalElements = 1;
+        Page<Business> page = new PageImpl<>(pageContent, pageInfo, totalElements);
+
+        when(businessListingService.getPaged(any()))
+                .thenReturn(page);
+
+        // when / then
+        mockMvc.perform(get("/api/business-listing/search/active")
+                        .param("page", "I am invalid page value"))
+
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("$.content[0].name").value(expectedBusiness.getName()))
+                .andExpect(jsonPath("$.content[0].description").value(expectedBusiness.getDescription()))
+                .andExpect(jsonPath("$.content[0].type").value(expectedBusiness.getType().toString()))
+                .andExpect(jsonPath("$.content[0].phoneNumber").value(expectedBusiness.getPhoneNumber()))
+
+                .andExpect(jsonPath("$.pageable.pageSize").value(pageInfo.getPageSize()))
+                .andExpect(jsonPath("$.pageable.pageNumber").value(pageInfo.getPageNumber()))
+                .andExpect(jsonPath("$.totalElements").value(totalElements));
+    }
+
+    @Test
+    public void whenGetRequestToFetchBusinessByType_withType_thenReturnBusinessList() throws Exception {
+        // given
+        Business expectedBusiness = new Business
+                .Builder("TEST", "DESCRIPTION", BusinessTypeEnum.HANDMADE)
+                .build();
+
+        List<Business> pageContent = List.of(expectedBusiness);
+        Pageable pageInfo = Pageable.ofSize(1).withPage(0);
+        long totalElements = 1;
+        Page<Business> page = new PageImpl<>(pageContent, pageInfo, totalElements);
+
+        when(businessListingService.getPagedByType(any(), any())).thenReturn(page);
+
+        // when / then
         mockMvc.perform(get("/api/business-listing/search")
-                        .param("page", pageNumber.toString())
-                        .param("type", "HANDMADE"))
-                .andExpect(status().isOk());
+                        .param("type", expectedBusiness.getType().toString()))
+
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("$.content[0].name").value(expectedBusiness.getName()))
+                .andExpect(jsonPath("$.content[0].description").value(expectedBusiness.getDescription()))
+                .andExpect(jsonPath("$.content[0].type").value(expectedBusiness.getType().toString()))
+                .andExpect(jsonPath("$.content[0].phoneNumber").value(expectedBusiness.getPhoneNumber()))
+
+                .andExpect(jsonPath("$.pageable.pageSize").value(pageInfo.getPageSize()))
+                .andExpect(jsonPath("$.pageable.pageNumber").value(pageInfo.getPageNumber()))
+                .andExpect(jsonPath("$.totalElements").value(totalElements));
+    }
+
+    @Test
+    public void whenGetRequestToFetchBusinessByType_withTypeAndPage_thenReturnBusinessList() throws Exception {
+        // given
+        Business expectedBusiness = new Business
+                .Builder("TEST", "DESCRIPTION", BusinessTypeEnum.HANDMADE)
+                .build();
+
+        List<Business> pageContent = List.of(expectedBusiness);
+        Pageable pageInfo = Pageable.ofSize(1).withPage(0);
+        long totalElements = 1;
+        Page<Business> page = new PageImpl<>(pageContent, pageInfo, totalElements);
+
+        when(businessListingService.getPagedByType(any(), any())).thenReturn(page);
+
+        // when / then
+        mockMvc.perform(get("/api/business-listing/search")
+                        .param("type", expectedBusiness.getType().toString())
+                        .param("page", String.valueOf(pageInfo.getPageNumber())))
+
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("$.content[0].name").value(expectedBusiness.getName()))
+                .andExpect(jsonPath("$.content[0].description").value(expectedBusiness.getDescription()))
+                .andExpect(jsonPath("$.content[0].type").value(expectedBusiness.getType().toString()))
+                .andExpect(jsonPath("$.content[0].phoneNumber").value(expectedBusiness.getPhoneNumber()))
+
+                .andExpect(jsonPath("$.pageable.pageSize").value(pageInfo.getPageSize()))
+                .andExpect(jsonPath("$.pageable.pageNumber").value(pageInfo.getPageNumber()))
+                .andExpect(jsonPath("$.totalElements").value(totalElements));
+    }
+
+    @Test
+    public void whenGetRequestToFetchBusinessByType_withTypeAndPageAndSize_thenReturnBusinessList() throws Exception {
+        // given
+        Business expectedBusiness = new Business
+                .Builder("TEST", "DESCRIPTION", BusinessTypeEnum.HANDMADE)
+                .build();
+
+        List<Business> pageContent = List.of(expectedBusiness);
+        Pageable pageInfo = Pageable.ofSize(1).withPage(0);
+        long totalElements = 1;
+        Page<Business> page = new PageImpl<>(pageContent, pageInfo, totalElements);
+
+        when(businessListingService.getPagedByType(any(), any())).thenReturn(page);
+
+        // when / then
+        mockMvc.perform(get("/api/business-listing/search")
+                        .param("type", expectedBusiness.getType().toString())
+                        .param("page", String.valueOf(pageInfo.getPageNumber()))
+                        .param("size", String.valueOf(pageInfo.getPageSize())))
+
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("$.content[0].name").value(expectedBusiness.getName()))
+                .andExpect(jsonPath("$.content[0].description").value(expectedBusiness.getDescription()))
+                .andExpect(jsonPath("$.content[0].type").value(expectedBusiness.getType().toString()))
+                .andExpect(jsonPath("$.content[0].phoneNumber").value(expectedBusiness.getPhoneNumber()))
+
+                .andExpect(jsonPath("$.pageable.pageSize").value(pageInfo.getPageSize()))
+                .andExpect(jsonPath("$.pageable.pageNumber").value(pageInfo.getPageNumber()))
+                .andExpect(jsonPath("$.totalElements").value(totalElements));
     }
 
     @Test
