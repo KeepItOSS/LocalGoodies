@@ -1,6 +1,6 @@
 package com.example.LocalGoodies.api.business_management.model;
 
-import com.example.LocalGoodies.api.business_management.model.DTO.BusinessRequestDTO;
+import com.example.LocalGoodies.api.business_management.model.DTO.BusinessRequest;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
@@ -143,9 +143,9 @@ public class Business {
         this.phoneNumber = phoneNumber;
     }
 
-    public void update(BusinessRequestDTO businessRequestDTO) {
-        this.name = businessRequestDTO.name();
-        this.description = businessRequestDTO.description();
-        this.type = businessRequestDTO.type();
+    public void update(BusinessRequest businessRequest) {
+        this.name = businessRequest.name();
+        this.description = businessRequest.description();
+        this.type = businessRequest.type();
     }
 }

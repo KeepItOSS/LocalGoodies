@@ -2,7 +2,7 @@ package com.example.LocalGoodies.api.business_management.model.DTO;
 
 import com.example.LocalGoodies.api.business_management.model.BusinessTypeEnum;
 
-public record BusinessResponseDTO(
+public record BusinessResponse(
         Long id,
         String name,
         String description,

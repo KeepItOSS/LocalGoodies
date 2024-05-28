@@ -1,14 +1,14 @@
 package com.example.LocalGoodies.api.business_management.model;
 
-import com.example.LocalGoodies.api.business_management.model.DTO.BusinessResponseDTO;
+import com.example.LocalGoodies.api.business_management.model.DTO.BusinessResponse;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class BusinessMapper {
-    public static BusinessResponseDTO mapEntityToResponseDto(Business entity) {
-        return new BusinessResponseDTO(
+    public static BusinessResponse mapEntityToResponse(Business entity) {
+        return new BusinessResponse(
                 entity.getId(),
                 entity.getName(),
                 entity.getDescription(),
@@ -18,13 +18,13 @@ public class BusinessMapper {
         );
     }
 
-    public static List<BusinessResponseDTO> mapEntitiesToResponseDtos(List<Business> entities) {
+    public static List<BusinessResponse> mapEntitiesToResponse(List<Business> entities) {
         return entities.stream()
-                .map(BusinessMapper::mapEntityToResponseDto)
+                .map(BusinessMapper::mapEntityToResponse)
                 .collect(Collectors.toList());
     }
 
-    public static Page<BusinessResponseDTO> mapEntitiesToResponseDtos(Page<Business> entities) {
-        return entities.map(BusinessMapper::mapEntityToResponseDto);
+    public static Page<BusinessResponse> mapEntitiesToResponse(Page<Business> entities) {
+        return entities.map(BusinessMapper::mapEntityToResponse);
     }
 }

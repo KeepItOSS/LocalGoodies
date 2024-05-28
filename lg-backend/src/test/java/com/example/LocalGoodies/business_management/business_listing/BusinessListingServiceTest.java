@@ -5,7 +5,7 @@ import com.example.LocalGoodies.api.business_management.business_listing.Busines
 import com.example.LocalGoodies.api.business_management.business_listing.BusinessSpecs;
 import com.example.LocalGoodies.api.business_management.model.Business;
 import com.example.LocalGoodies.api.business_management.model.BusinessTypeEnum;
-import com.example.LocalGoodies.api.business_management.model.DTO.BusinessRequestDTO;
+import com.example.LocalGoodies.api.business_management.model.DTO.BusinessRequest;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -97,7 +97,7 @@ public class BusinessListingServiceTest {
     @Test
     void shouldCreateWhenEmptyEmailAndPhoneNumber() {
         // given
-        BusinessRequestDTO businessRequestDTO = new BusinessRequestDTO(
+        BusinessRequest businessRequest = new BusinessRequest(
                 "TEST",
                 "DESCRIPTION",
                 BusinessTypeEnum.HANDMADE,
@@ -108,7 +108,7 @@ public class BusinessListingServiceTest {
         when(businessListingRepository.save(any(Business.class))).thenReturn(expectedBusiness);
 
         // when
-        Business result = businessListingService.addNew(businessRequestDTO);
+        Business result = businessListingService.addNew(businessRequest);
 
         // then
         Assertions.assertNotNull(result);
@@ -119,7 +119,7 @@ public class BusinessListingServiceTest {
     @Test
     void shouldCreateWhenEmailProvided() {
         // given
-        BusinessRequestDTO businessRequestDTO = new BusinessRequestDTO(
+        BusinessRequest businessRequest = new BusinessRequest(
                 "TEST",
                 "DESCRIPTION",
                 BusinessTypeEnum.HANDMADE,
@@ -133,7 +133,7 @@ public class BusinessListingServiceTest {
         when(businessListingRepository.save(any(Business.class))).thenReturn(expectedBusiness);
 
         // when
-        Business result = businessListingService.addNew(businessRequestDTO);
+        Business result = businessListingService.addNew(businessRequest);
 
         // then
         Assertions.assertNotNull(result);
@@ -144,7 +144,7 @@ public class BusinessListingServiceTest {
     @Test
     void shouldCreateWhenPhoneNumberProvided() {
         // given
-        BusinessRequestDTO businessRequestDTO = new BusinessRequestDTO(
+        BusinessRequest businessRequest = new BusinessRequest(
                 "TEST",
                 "DESCRIPTION",
                 BusinessTypeEnum.HANDMADE,
@@ -158,7 +158,7 @@ public class BusinessListingServiceTest {
         when(businessListingRepository.save(any(Business.class))).thenReturn(expectedBusiness);
 
         // when
-        Business result = businessListingService.addNew(businessRequestDTO);
+        Business result = businessListingService.addNew(businessRequest);
 
         // then
         Assertions.assertNotNull(result);
@@ -170,7 +170,7 @@ public class BusinessListingServiceTest {
     void shouldUpdateBusinessWhenValidIdAndRequestProvided() {
         // given
         Long id = 1L;
-        BusinessRequestDTO businessRequestDTO = new BusinessRequestDTO(
+        BusinessRequest businessRequest = new BusinessRequest(
                 "Updated Business",
                 "Updated Description",
                 BusinessTypeEnum.HANDMADE,
@@ -189,7 +189,7 @@ public class BusinessListingServiceTest {
         when(businessListingRepository.save(any(Business.class))).thenReturn(expectedBusiness);
 
         // when
-        Business result = businessListingService.update(id, businessRequestDTO);
+        Business result = businessListingService.update(id, businessRequest);
 
         // then
         Assertions.assertNotNull(result);
@@ -204,7 +204,7 @@ public class BusinessListingServiceTest {
     void shouldThrowExceptionWhenInvalidIdProvided() {
         // given
         Long id = 1L;
-        BusinessRequestDTO businessRequestDTO = new BusinessRequestDTO(
+        BusinessRequest businessRequest = new BusinessRequest(
                 "Updated Business",
                 "Updated Description",
                 BusinessTypeEnum.HANDMADE,
@@ -215,7 +215,7 @@ public class BusinessListingServiceTest {
 
         // when
         Exception exception = assertThrows(EntityNotFoundException.class, () -> {
-            businessListingService.update(id, businessRequestDTO);
+            businessListingService.update(id, businessRequest);
         });
 
         // then
@@ -228,7 +228,7 @@ public class BusinessListingServiceTest {
     @Test
     void shouldNotChangeEmailWhenInvalidEmailProvided() {
         // given
-        BusinessRequestDTO businessRequestDTO = new BusinessRequestDTO(
+        BusinessRequest businessRequest = new BusinessRequest(
                 "TEST",
                 "DESCRIPTION",
                 BusinessTypeEnum.HANDMADE,
@@ -242,7 +242,7 @@ public class BusinessListingServiceTest {
         when(businessListingRepository.save(any(Business.class))).thenReturn(expectedBusiness);
 
         // when
-        Business result = businessListingService.addNew(businessRequestDTO);
+        Business result = businessListingService.addNew(businessRequest);
 
         // then
         Assertions.assertNotNull(result);

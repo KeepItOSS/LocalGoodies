@@ -4,7 +4,7 @@ import com.example.LocalGoodies.api.business_management.business_listing.Busines
 import com.example.LocalGoodies.api.business_management.business_listing.BusinessListingService;
 import com.example.LocalGoodies.api.business_management.model.Business;
 import com.example.LocalGoodies.api.business_management.model.BusinessTypeEnum;
-import com.example.LocalGoodies.api.business_management.model.DTO.BusinessRequestDTO;
+import com.example.LocalGoodies.api.business_management.model.DTO.BusinessRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -299,7 +299,7 @@ public class BusinessListingControllerTest {
 
     @Test
     public void whenPostRequestToCreateAndValidRequest_thenReturnBusiness() throws Exception {
-        BusinessRequestDTO businessRequestDTO = new BusinessRequestDTO(
+        BusinessRequest businessRequest = new BusinessRequest(
                 "TEST",
                 "DESCRIPTION",
                 BusinessTypeEnum.HANDMADE,
@@ -314,13 +314,13 @@ public class BusinessListingControllerTest {
 
         mockMvc.perform(post("/api/business-listing/add")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(businessRequestDTO)))
+                        .content(objectMapper.writeValueAsString(businessRequest)))
                 .andExpect(status().isCreated());
     }
 
     @Test
     public void whenPostRequestToCreateAndInvalidRequest_thenThrowException() throws Exception {
-        BusinessRequestDTO businessRequestDTO = new BusinessRequestDTO(
+        BusinessRequest businessRequest = new BusinessRequest(
                 null,
                 null,
                 null,
@@ -328,13 +328,13 @@ public class BusinessListingControllerTest {
                 null);
         mockMvc.perform(post("/api/business-listing/add")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(businessRequestDTO)))
+                        .content(objectMapper.writeValueAsString(businessRequest)))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     public void whenPutRequestToUpdateAndValidRequest_thenReturnBusiness() throws Exception {
-        BusinessRequestDTO businessRequestDTO = new BusinessRequestDTO(
+        BusinessRequest businessRequest = new BusinessRequest(
                 "TEST",
                 "DESCRIPTION",
                 BusinessTypeEnum.HANDMADE,
@@ -349,13 +349,13 @@ public class BusinessListingControllerTest {
 
         mockMvc.perform(put("/api/business-listing/update/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(businessRequestDTO)))
+                        .content(objectMapper.writeValueAsString(businessRequest)))
                 .andExpect(status().isOk());
     }
 
     @Test
     public void whenPutRequestToUpdateAndInvalidRequest_thenThrowException() throws Exception {
-        BusinessRequestDTO businessRequestDTO = new BusinessRequestDTO(
+        BusinessRequest businessRequest = new BusinessRequest(
                 null,
                 null,
                 null,
@@ -363,7 +363,7 @@ public class BusinessListingControllerTest {
                 null);
         mockMvc.perform(put("/api/business-listing/update/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(businessRequestDTO)))
+                        .content(objectMapper.writeValueAsString(businessRequest)))
                 .andExpect(status().isBadRequest());
     }
 }
