@@ -1,7 +1,8 @@
-import RenderBusinesList from "@/components/card-business";
+import RenderBusinesList from "@/components/shared/card-business";
+import Paginate from "@/components/shared/pagination";
 import { getActiveBusinesses } from "@/http/business-listing";
-import Paginate from "@/components/pagination";
-import { BusinessPage, SearchParamProps } from "@/models/business";
+import { BusinessPage } from "@/models/business";
+import { SearchParamProps } from "@/models/SearchParamProps";
 
 export default async function Page({ searchParams }: Readonly<SearchParamProps>) {
     const currentPage = Number(searchParams?.page || 1);

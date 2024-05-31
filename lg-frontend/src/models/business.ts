@@ -25,9 +25,3 @@ export type BusinessPage = {
     empty: boolean
 }
 
-export interface SearchParamProps {
-    searchParams?: {
-        page?: string;
-        query?: string;
-    };
-}

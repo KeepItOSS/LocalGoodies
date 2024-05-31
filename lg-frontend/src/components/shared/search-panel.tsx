@@ -5,9 +5,7 @@ import { Business } from "@/models/business";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-// think about using path params when searching 
 export default function SearchPanel() {
-    // todo 14.05.2024 fill initial state with suggestions after caching is implemented
     const [businesses, setBusinesses] = useState<Business[]>([]);
     const [query, setQuery] = useState<string>('');
     const [isInputFocused, setIsInputFocused] = useState<boolean>(false);
@@ -40,7 +38,16 @@ export default function SearchPanel() {
                         onFocus={() => setIsInputFocused(true)}
                         onBlur={() => { setTimeout(() => {setIsInputFocused(false)} , 200) }}
                     />
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-4 h-4 opacity-70"><path fillRule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clipRule="evenodd" /></svg>
+                    <svg 
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 16 16"
+                        fill="currentColor"
+                        className="w-4 h-4 opacity-70">
+                        <path 
+                            fillRule="evenodd"
+                            d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" 
+                            clipRule="evenodd" />
+                    </svg>
                 </label>
                 {isInputFocused && <SearchResultList business={businesses} />}
             </div>

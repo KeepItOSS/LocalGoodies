@@ -19,12 +19,11 @@ export default function Paginate({ currentPage, maxPage }: pageProps) {
         router.push(createPageURL(currentPage - 1));
     }
 
-    function createPageURL(pageNumber: number | string) {
+    const createPageURL = (pageNumber: number | string) => {
         const params = new URLSearchParams(searchParams);
         params.set('page', String(pageNumber));
         return `${pathname}?${params}`;
-    }; 
-
+    };
 
     const router = useRouter();
 
@@ -34,7 +33,7 @@ export default function Paginate({ currentPage, maxPage }: pageProps) {
                 className="join-item btn"
                 onClick={pageUp}> « </button>
 
-            <button className="join-item btn">{ currentPage } </button>
+            <div className="join-item btn"> Page { currentPage } of { maxPage } </div>
 
             <button 
                 className="join-item btn" 
