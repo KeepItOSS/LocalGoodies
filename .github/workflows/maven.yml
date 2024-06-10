@@ -27,7 +27,8 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
         cache: maven
-        
+        cache-dependency-path: './lg-backend/package-lock.json'
+
     - name: Build Package
       run: mvn -B package -DskipTests --file pom.xml
       working-directory: lg-backend
