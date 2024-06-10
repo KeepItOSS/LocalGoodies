@@ -4,12 +4,13 @@ import { getBusinessByQueryName } from "@/http/business-listing";
 import { Business } from "@/models/business";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useDebounceInputQuery } from "./customHooks";
 
 export default function SearchPanel() {
     const [businesses, setBusinesses] = useState<Business[]>([]);
     const [query, setQuery] = useState<string>('');
     const [isInputFocused, setIsInputFocused] = useState<boolean>(false);
-    const inputQuery = debounceInputQuery(query, 500);
+    const inputQuery = useDebounceInputQuery(query, 500);
 
     useEffect(() => {
         if (!inputQuery ||
@@ -77,18 +78,3 @@ function SearchResultList({ business }: { business: Business[] }) {
     );
 }
 
-function debounceInputQuery(inputValue: string, wait: number) {
-    const [query, setQuery] = useState<string>('');
-
-    useEffect(() => {
-        const handler = setTimeout(() => {
-            setQuery(inputValue as string);
-        }, wait);
-
-        return () => {
-            clearTimeout(handler);
-        };
-    }, [inputValue, wait]);
-
-    return query;
-}
