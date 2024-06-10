@@ -5,7 +5,7 @@ import com.example.LocalGoodies.api.business_management.business_listing.Busines
 import com.example.LocalGoodies.api.business_management.business_listing.BusinessSpecs;
 import com.example.LocalGoodies.api.business_management.model.Business;
 import com.example.LocalGoodies.api.business_management.model.BusinessTypeEnum;
-import com.example.LocalGoodies.api.business_management.model.DTO.BusinessRequestDTO;
+import com.example.LocalGoodies.api.business_management.model.DTO.BusinessRequest;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -13,6 +13,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +24,7 @@ import static com.example.LocalGoodies.api.business_management.business_listing.
 import static com.example.LocalGoodies.api.business_management.business_listing.BusinessSpecs.isOfType;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,12 +50,20 @@ public class BusinessListingServiceTest {
                 .phoneNumber("987654321")
                 .build();
         List<Business> businesses = List.of(B1, B2);
-        when(businessListingRepository.findAll(isActive())).thenReturn(businesses);
+
+        Pageable pageInfo = Pageable.ofSize(2).withPage(0);
+        long totalElements = 1;
+        Page<Business> page = new PageImpl<>(businesses, pageInfo, totalElements);
+        when(businessListingRepository.findAll(eq(isActive()), any(Pageable.class))).thenReturn(page);
+
         // when
-        List<Business> result = businessListingService.getAllActiveBusinesses();
+        Page<Business> result = businessListingService.getPaged(pageInfo);
+
         // then
         Assertions.assertNotNull(result);
-        Assertions.assertEquals(2, result.size());
+        Assertions.assertEquals(page.getTotalElements(), result.getTotalElements());
+        Assertions.assertEquals(page.getContent().size(), result.getContent().size());
+        Assertions.assertEquals(page.getContent().getFirst().getName(), result.getContent().getFirst().getName());
     }
 
     @Test
@@ -64,19 +76,28 @@ public class BusinessListingServiceTest {
                 .phoneNumber("123456789")
                 .build();
         List<Business> businesses = List.of(B1);
-        when(businessListingRepository.findAll(isOfType(any()).and(isActive()))).thenReturn(businesses);
+
+        Pageable pageInfo = Pageable.ofSize(2).withPage(0);
+        long totalElements = 1;
+        Page<Business> page = new PageImpl<>(businesses, pageInfo, totalElements);
+
+        when(businessListingRepository.findAll(isOfType(any()).and(isActive()), any(Pageable.class))).thenReturn(page);
+
         // when
-        List<Business> result = businessListingService.getByType(type);
+        Integer pageNumber = 0;
+        Page<Business> result = businessListingService.getPagedByType(pageInfo, type);
+
         // then
         Assertions.assertNotNull(result);
-        Assertions.assertEquals(1, result.size());
-        Assertions.assertEquals(BusinessTypeEnum.HANDMADE, result.getFirst().getType());
+        Assertions.assertEquals(page.getTotalElements(), result.getTotalElements());
+        Assertions.assertEquals(page.getContent().size(), result.getContent().size());
+        Assertions.assertEquals(page.getContent().getFirst().getType(), result.getContent().getFirst().getType());
     }
 
     @Test
     void shouldCreateWhenEmptyEmailAndPhoneNumber() {
         // given
-        BusinessRequestDTO businessRequestDTO = new BusinessRequestDTO(
+        BusinessRequest businessRequest = new BusinessRequest(
                 "TEST",
                 "DESCRIPTION",
                 BusinessTypeEnum.HANDMADE,
@@ -87,7 +108,7 @@ public class BusinessListingServiceTest {
         when(businessListingRepository.save(any(Business.class))).thenReturn(expectedBusiness);
 
         // when
-        Business result = businessListingService.addNew(businessRequestDTO);
+        Business result = businessListingService.addNew(businessRequest);
 
         // then
         Assertions.assertNotNull(result);
@@ -98,18 +119,21 @@ public class BusinessListingServiceTest {
     @Test
     void shouldCreateWhenEmailProvided() {
         // given
-        BusinessRequestDTO businessRequestDTO = new BusinessRequestDTO(
+        BusinessRequest businessRequest = new BusinessRequest(
                 "TEST",
                 "DESCRIPTION",
                 BusinessTypeEnum.HANDMADE,
                 null,
                 "test@test.com");
-        Business expectedBusiness = new Business.Builder("TEST", "DESCRIPTION", BusinessTypeEnum.HANDMADE).email("test@test.com").build();
+        Business expectedBusiness = new Business
+                .Builder("TEST", "DESCRIPTION", BusinessTypeEnum.HANDMADE)
+                .email("test@test.com")
+                .build();
 
         when(businessListingRepository.save(any(Business.class))).thenReturn(expectedBusiness);
 
         // when
-        Business result = businessListingService.addNew(businessRequestDTO);
+        Business result = businessListingService.addNew(businessRequest);
 
         // then
         Assertions.assertNotNull(result);
@@ -120,18 +144,21 @@ public class BusinessListingServiceTest {
     @Test
     void shouldCreateWhenPhoneNumberProvided() {
         // given
-        BusinessRequestDTO businessRequestDTO = new BusinessRequestDTO(
+        BusinessRequest businessRequest = new BusinessRequest(
                 "TEST",
                 "DESCRIPTION",
                 BusinessTypeEnum.HANDMADE,
                 "+48123456789",
                 null);
-        Business expectedBusiness = new Business.Builder("TEST", "DESCRIPTION", BusinessTypeEnum.HANDMADE).phoneNumber("+48123123123").build();
+        Business expectedBusiness = new Business
+                .Builder("TEST", "DESCRIPTION", BusinessTypeEnum.HANDMADE)
+                .phoneNumber("+48123123123")
+                .build();
 
         when(businessListingRepository.save(any(Business.class))).thenReturn(expectedBusiness);
 
         // when
-        Business result = businessListingService.addNew(businessRequestDTO);
+        Business result = businessListingService.addNew(businessRequest);
 
         // then
         Assertions.assertNotNull(result);
@@ -143,20 +170,26 @@ public class BusinessListingServiceTest {
     void shouldUpdateBusinessWhenValidIdAndRequestProvided() {
         // given
         Long id = 1L;
-        BusinessRequestDTO businessRequestDTO = new BusinessRequestDTO(
+        BusinessRequest businessRequest = new BusinessRequest(
                 "Updated Business",
                 "Updated Description",
                 BusinessTypeEnum.HANDMADE,
                 "updated@email.com",
                 "987654321");
-        Business existingBusiness = new Business.Builder("Existing Business", "Existing Description", BusinessTypeEnum.HANDMADE).build();
-        Business expectedBusiness = new Business.Builder("Updated Business", "Updated Description", BusinessTypeEnum.HANDMADE).email("updated@email.com").phoneNumber("987654321").build();
+        Business existingBusiness = new Business
+                .Builder("Existing Business", "Existing Description", BusinessTypeEnum.HANDMADE)
+                .build();
+        Business expectedBusiness = new Business
+                .Builder("Updated Business", "Updated Description", BusinessTypeEnum.HANDMADE)
+                .email("updated@email.com")
+                .phoneNumber("987654321")
+                .build();
 
         when(businessListingRepository.findById(id)).thenReturn(Optional.of(existingBusiness));
         when(businessListingRepository.save(any(Business.class))).thenReturn(expectedBusiness);
 
         // when
-        Business result = businessListingService.update(id, businessRequestDTO);
+        Business result = businessListingService.update(id, businessRequest);
 
         // then
         Assertions.assertNotNull(result);
@@ -171,7 +204,7 @@ public class BusinessListingServiceTest {
     void shouldThrowExceptionWhenInvalidIdProvided() {
         // given
         Long id = 1L;
-        BusinessRequestDTO businessRequestDTO = new BusinessRequestDTO(
+        BusinessRequest businessRequest = new BusinessRequest(
                 "Updated Business",
                 "Updated Description",
                 BusinessTypeEnum.HANDMADE,
@@ -182,7 +215,7 @@ public class BusinessListingServiceTest {
 
         // when
         Exception exception = assertThrows(EntityNotFoundException.class, () -> {
-            businessListingService.update(id, businessRequestDTO);
+            businessListingService.update(id, businessRequest);
         });
 
         // then
@@ -195,18 +228,21 @@ public class BusinessListingServiceTest {
     @Test
     void shouldNotChangeEmailWhenInvalidEmailProvided() {
         // given
-        BusinessRequestDTO businessRequestDTO = new BusinessRequestDTO(
+        BusinessRequest businessRequest = new BusinessRequest(
                 "TEST",
                 "DESCRIPTION",
                 BusinessTypeEnum.HANDMADE,
                 "invalid-email",
                 null);
-        Business expectedBusiness = new Business.Builder("TEST", "DESCRIPTION", BusinessTypeEnum.HANDMADE).email("mail@mail.com").build();
+        Business expectedBusiness = new Business
+                .Builder("TEST", "DESCRIPTION", BusinessTypeEnum.HANDMADE)
+                .email("mail@mail.com")
+                .build();
 
         when(businessListingRepository.save(any(Business.class))).thenReturn(expectedBusiness);
 
         // when
-        Business result = businessListingService.addNew(businessRequestDTO);
+        Business result = businessListingService.addNew(businessRequest);
 
         // then
         Assertions.assertNotNull(result);
@@ -229,7 +265,8 @@ public class BusinessListingServiceTest {
                 .phoneNumber("987654321")
                 .build();
         List<Business> businesses = List.of(B1, B2);
-        when(businessListingRepository.findAll(BusinessSpecs.nameStartsWith(any()).and(isActive()))).thenReturn(businesses);
+        when(businessListingRepository
+                .findAll(BusinessSpecs.nameStartsWith(any()).and(isActive()))).thenReturn(businesses);
 
         // when
         List<Business> result = businessListingService.getByNameStartsWith(name);
@@ -243,7 +280,8 @@ public class BusinessListingServiceTest {
     void shouldFetchEmptyListWhenNoBusinessesWithNameStartsWith() {
         // given
         String name = "NonExistent";
-        when(businessListingRepository.findAll(BusinessSpecs.nameStartsWith(any()).and(isActive()))).thenReturn(List.of());
+        when(businessListingRepository
+                .findAll(BusinessSpecs.nameStartsWith(any()).and(isActive()))).thenReturn(List.of());
 
         // when
         List<Business> result = businessListingService.getByNameStartsWith(name);
@@ -252,5 +290,4 @@ public class BusinessListingServiceTest {
         Assertions.assertNotNull(result);
         Assertions.assertTrue(result.isEmpty());
     }
-
 }

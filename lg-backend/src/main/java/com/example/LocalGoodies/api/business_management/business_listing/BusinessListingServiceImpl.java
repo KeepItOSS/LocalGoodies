@@ -2,9 +2,11 @@ package com.example.LocalGoodies.api.business_management.business_listing;
 
 import com.example.LocalGoodies.api.business_management.model.Business;
 import com.example.LocalGoodies.api.business_management.model.BusinessTypeEnum;
-import com.example.LocalGoodies.api.business_management.model.DTO.BusinessRequestDTO;
+import com.example.LocalGoodies.api.business_management.model.DTO.BusinessRequest;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +21,7 @@ public class BusinessListingServiceImpl implements BusinessListingService {
     private final static Pattern EMAIL_PATTERN = Pattern.compile("^(.+)@(.+)$");
     //  phone number regex taken from https://github.com/skotniczny/phonePL
     private final static Pattern PHONE_NUM_PATTERN = Pattern.compile("(?:(?:(?:\\+|00)?48)|(?:\\(\\+?48\\)))?(?:1[2-8]|2[2-69]|3[2-49]|4[1-8]|5[0-9]|6[0-35-9]|[7-8][1-9]|9[145])\\d{7}");
+    private final static Integer UNIFORM_PAGE_SIZE = 5;
 
     private final BusinessListingRepository businessListingRepository;
 
@@ -29,13 +32,13 @@ public class BusinessListingServiceImpl implements BusinessListingService {
     }
 
     @Override
-    public List<Business> getAllActiveBusinesses() {
-        return businessListingRepository.findAll(isActive());
+    public Page<Business> getPaged(Pageable pageable){
+        return businessListingRepository.findAll(isActive(), pageable);
     }
 
     @Override
-    public List<Business> getByType(BusinessTypeEnum type) {
-        return businessListingRepository.findAll(isOfType(type).and(isActive()));
+    public Page<Business> getPagedByType(Pageable pageable, BusinessTypeEnum type){
+        return businessListingRepository.findAll(isOfType(type).and(isActive()), pageable);
     }
 
     @Override
@@ -44,22 +47,22 @@ public class BusinessListingServiceImpl implements BusinessListingService {
     }
 
     @Override
-    public Business addNew(BusinessRequestDTO businessRequestDTO) {
-        Business business = createBusinessInstance(businessRequestDTO);
+    public Business addNew(BusinessRequest businessRequest) {
+        Business business = createBusinessInstance(businessRequest);
         return businessListingRepository.save(business);
     }
 
     @Override
-    public Business update(Long id, BusinessRequestDTO businessRequestDTO) {
+    public Business update(Long id, BusinessRequest businessRequest) {
         Business existingBusiness = getExistingBusiness(id);
-        Business updatedBusiness = updateBusiness(businessRequestDTO, existingBusiness);
+        Business updatedBusiness = updateBusiness(businessRequest, existingBusiness);
         return businessListingRepository.save(updatedBusiness);
     }
 
-    private Business updateBusiness(BusinessRequestDTO businessRequestDTO, Business existingBusiness) {
-        existingBusiness.update(businessRequestDTO);
-        addEmailIfValid(businessRequestDTO.email(), existingBusiness);
-        addPhoneNumberIfValid(businessRequestDTO.phoneNumber(), existingBusiness);
+    private Business updateBusiness(BusinessRequest businessRequest, Business existingBusiness) {
+        existingBusiness.update(businessRequest);
+        addEmailIfValid(businessRequest.email(), existingBusiness);
+        addPhoneNumberIfValid(businessRequest.phoneNumber(), existingBusiness);
         return existingBusiness;
     }
 
@@ -68,14 +71,14 @@ public class BusinessListingServiceImpl implements BusinessListingService {
                 .orElseThrow(() -> new EntityNotFoundException("Business with id " + id + " not found"));
     }
 
-    private Business createBusinessInstance(BusinessRequestDTO businessRequestDTO) {
+    private Business createBusinessInstance(BusinessRequest businessRequest) {
         Business business = new Business.Builder(
-                businessRequestDTO.name(),
-                businessRequestDTO.description(),
-                businessRequestDTO.type())
+                businessRequest.name(),
+                businessRequest.description(),
+                businessRequest.type())
                 .build();
-        addEmailIfValid(businessRequestDTO.email(), business);
-        addPhoneNumberIfValid(businessRequestDTO.phoneNumber(), business);
+        addEmailIfValid(businessRequest.email(), business);
+        addPhoneNumberIfValid(businessRequest.phoneNumber(), business);
         return business;
     }
 

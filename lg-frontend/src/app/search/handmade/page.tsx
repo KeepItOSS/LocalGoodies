@@ -1,19 +1,22 @@
-import CardL from "@/components/cards";
-import { Business } from ".././types";
-import { getBusinesses } from "../http";
+import RenderBusinesList from "@/components/shared/card-business";
+import { BusinessPage } from "../../../models/business";
+import { getBusinessesByType } from "@/http/business-listing";
+import { SearchParamProps } from "@/models/SearchParamProps";
+import Paginate from "@/components/shared/pagination";
 
-export default async function Page() {
-    let business: Business[] = await getBusinesses("HANDMADE");
-    
+export default async function Page({ searchParams }: Readonly<SearchParamProps>) {
+    const currentPage = Number(searchParams?.page || 1);
+
+    let businesses: BusinessPage = await getBusinessesByType(currentPage, "HANDMADE");
+
+    if (!businesses) return null;
     return (
-        <div className="pt-12 p-5 flex flex-col gap-5">
-            { business.map( (bus: Business) => 
-                <CardL key={bus.id}
-                    name = {bus.name}
-                    desc = {bus.description} 
-                    type = {bus.type}
-                />
-            )}
-        </div>
+        <>
+            <RenderBusinesList 
+                businesses={businesses.content} />
+            <Paginate
+                currentPage={currentPage} 
+                maxPage={businesses.totalPages} />
+        </>
     );
 }
