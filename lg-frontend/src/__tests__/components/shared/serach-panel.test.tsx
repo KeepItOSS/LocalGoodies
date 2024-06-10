@@ -1,16 +1,14 @@
-jest.mock('@/http/business-listing', () => ({
-    getBusinessByQueryName: jest.fn(() => Promise.resolve(businessListMock)),
-}));
-
 import SearchPanel from "@/components/shared/search-panel";
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { Business } from "@/models/business";
 import { describe, beforeEach, it, expect, jest } from '@jest/globals';
 import '@testing-library/jest-dom';
-import '@/http/business-listing';
 
-const getBusinessByQueryName = require('@/http/business-listing');
-
+global.fetch = jest.fn(() =>
+    Promise.resolve({
+        json: () => Promise.resolve(businessListMock),
+    })
+) as jest.Mock;
 jest.useFakeTimers();
 
 const businessListMock: Business[] = [
@@ -54,7 +52,7 @@ describe('SearchPanel', () => {
         // assert
         expect(input).toHaveValue('Business');
     });
-    it('calls getBusinessByQueryName after debounce', async () => {
+    it('succesfully calls api on input', async () => {
         // arrange
         render(<SearchPanel />);
         const input = screen.getByPlaceholderText('What are you looking for?');
@@ -62,8 +60,33 @@ describe('SearchPanel', () => {
         fireEvent.change(input, { target: { value: 'Business' } });
         // assert
         await waitFor(() => {
-            const businesses = screen.getAllByText(/Business/);
-            expect(businesses).toHaveLength(2);
+            expect(fetch).toHaveBeenCalledTimes(1);
+            expect(fetch).toHaveBeenCalledWith("http://localhost:8080/api/business-listing/search/name?name=Business");
+        });
+    });
+    it('succesfully calls api and displays list on input', async () => {
+        // arrange
+        render(<SearchPanel />);
+        const input = screen.getByPlaceholderText('What are you looking for?');
+        // act
+        fireEvent.focus(input);
+        fireEvent.change(input, { target: { value: 'Business' } });
+        // assert
+        await waitFor(() => {
+            const businessList = screen.queryAllByText(/Business/);
+            expect(businessList).toHaveLength(2);
+        });
+    });
+    it('does not show list input not focused', async () => {
+        // arrange
+        render(<SearchPanel />);
+        const input = screen.getByPlaceholderText('What are you looking for?');
+        // act
+        fireEvent.change(input, { target: { value: 'Business' } });
+        // assert
+        await waitFor(() => {
+            const businessList = screen.queryAllByText(/Business/);
+            expect(businessList).toHaveLength(0);
         });
     });
 });
