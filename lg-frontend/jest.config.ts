@@ -6,12 +6,15 @@ const createJestConfig = nextJest({
 })
 
 const config: Config = {
+    modulePaths: ["<rootDir>"],
     coverageProvider: "v8",
     testEnvironment: "jsdom",
-
     clearMocks: true,
     collectCoverage: true,
     coverageDirectory: "coverage",
+    moduleNameMapper: {
+        '^@/(.*)$': '<rootDir>/src/$1',
+    },
 };
 
 export default createJestConfig(config);

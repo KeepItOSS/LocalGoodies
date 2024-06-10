@@ -1,5 +1,5 @@
-import BusinessTypeListing from "@/components/business-selection-bar";
-import SearchPanel from "@/components/search-panel";
+import BusinessTypeListing from "@/components/navigation/business-selection-bar";
+import SearchPanel from "@/components/shared/search-panel";
 import React from "react";
 
 export default function SearchLayout({
