@@ -23,5 +23,18 @@ export type BusinessPage = {
     first: boolean,
     numberOfElements: number,
     empty: boolean
-}
+};
 
+export type BusinessForm = {
+    name: string,
+    description: string,
+    type: BusinessType,
+    phoneNumber?: string,
+    email?: string,
+};
+
+export enum BusinessType {
+    HANDMADE_GOODS = "Handmade Goods",
+    REPAIRS = "Repairs",
+    RESTAURANTS = "Restaurants"
+};
