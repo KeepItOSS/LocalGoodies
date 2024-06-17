@@ -34,7 +34,7 @@ export type BusinessForm = {
 };
 
 export enum BusinessType {
-    HANDMADE_GOODS = "Handmade Goods",
-    REPAIRS = "Repairs",
-    RESTAURANTS = "Restaurants"
+    HANDMADE = "HANDMADE",
+    REPAIRS = "REPAIRS",
+    RESTAURANTS = "RESTAURANTS"
 };

@@ -1,5 +1,6 @@
 'use client'
 
+import { addNewBusiness } from "@/http/business-management";
 import { BusinessForm, BusinessType } from "@/models/business";
 
 export default function AddBusinessForm() {
@@ -7,7 +8,8 @@ export default function AddBusinessForm() {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
         const formFields: BusinessForm = Object.fromEntries(formData.entries()) as BusinessForm;
-        console.log(formFields);
+        const response = await addNewBusiness(formFields);
+        console.log(response);
     }
 
     return (
@@ -60,7 +62,7 @@ export default function AddBusinessForm() {
 }
 
 // TODO add fetch for type options
-const options: BusinessType[] = [BusinessType.HANDMADE_GOODS, BusinessType.REPAIRS, BusinessType.RESTAURANTS];
+const options: BusinessType[] = [BusinessType.HANDMADE, BusinessType.REPAIRS, BusinessType.RESTAURANTS];
 
 type LabeledInputProps = { 
     label: string,

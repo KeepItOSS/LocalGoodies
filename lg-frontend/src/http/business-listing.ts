@@ -1,7 +1,7 @@
 import { Business, BusinessPage } from "../models/business";
 import { unstable_noStore as noStore } from 'next/cache';
 
-const BASE_URL = process.env.BASE_URL + '/business-listing' ;
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL + '/business-listing' ;
 
 export async function getActiveBusinesses(page: number)
     :Promise<BusinessPage> {
